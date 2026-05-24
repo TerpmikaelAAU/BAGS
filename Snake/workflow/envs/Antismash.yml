@@ -1,0 +1,9 @@
+# envs/geneML_env.yaml
+name: antismash
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python  # Or your desired Python version
+  - antismash
+
