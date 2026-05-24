@@ -1,0 +1,12 @@
+# envs/geneML_env.yaml
+name: geneML_python
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.13 
+  - pip
+  - git 
+  - pip:
+    - git+https://github.com/hexagonbio/geneML

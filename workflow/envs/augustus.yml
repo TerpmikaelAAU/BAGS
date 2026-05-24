@@ -1,0 +1,14 @@
+# envs/geneML_env.yaml
+name: augustus
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python  
+  - augustus
+
+
+
+
+
+
