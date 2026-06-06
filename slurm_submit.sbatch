@@ -1,10 +1,9 @@
 #!/usr/bin/bash -l
-#SBATCH --job-name=SNAKE_WARP
+#SBATCH --job-name=BAGS
 #SBATCH --output=job_%j_%x.out
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --partition=general
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=1G
 #SBATCH --time=3-00:00:00
