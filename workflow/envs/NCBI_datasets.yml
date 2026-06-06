@@ -1,0 +1,13 @@
+# envs/NCBI_database.yml
+name: NCBI_database
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - ncbi-datasets-cli
+
+
+
+
+
+
