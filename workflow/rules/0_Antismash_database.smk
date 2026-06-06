@@ -1,5 +1,3 @@
-configfile: "config/config.yaml"
-
 rule Antismash_database:
     output:
         dir = directory("data/databases/antismashdatabase"),

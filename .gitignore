@@ -1,0 +1,87 @@
+# =========================
+# Operating System Files
+# =========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# =========================
+# IDEs and Editors
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# =========================
+# Python
+# =========================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# =========================
+# Snakemake & HPC Clusters
+# =========================
+.snakemake/
+slurm-*.out
+slurm-*.err
+core.*
+
+# =========================
+# LaTeX
+# =========================
+*.aux
+*.bbl
+*.blg
+*.brf
+*.fdb_latexmk
+*.fls
+*.idx
+*.ilg
+*.ind
+*.lof
+*.log
+*.lot
+*.out
+*.toc
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
+
+# =========================
+# Data & Temporary Files
+# =========================
+*.tar.gz
+*.zip
+*.fna
+*.faa
+*.gbk
+tmp/
+temp/
+
+# =========================
+# Folders
+# =========================
+SNAKE_Joblogs/
+data/
+Logs/

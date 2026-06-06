@@ -1,25 +1,16 @@
-configfile: "config/config.yaml"
-
-rule Antismash:
+rule antismash:
     input:
-        a = "data/GeneML_prediction/{samples}.gff",
-        b = "data/genomes/{samples}.fna",
+        gff="data/GeneML_prediction/{genome}.gff",
+        db="data/databases/antismashdatabase",
     output:
-        directory("data/Antismash/{samples}"),
-    threads: 12,
-    resources:
-        mem_mb=resources["antismash"]["mem_mb"],
-        runtime=resources["antismash"]["time"]
+        out_dir=directory("data/Antismash/{genome}"),
     conda:
         "../envs/Antismash.yml"
+    threads: 8
+    resources:
+        mem_mb=resources["antismash"]["mem_mb"],
+        runtime=resources["antismash"]["time"],
     shell:
         """
-        antismash \
-             -c {threads} -v \
-             --databases "data/databases/antismashdatabase" \
-             --genefinding-tool none --cc-mibig --cb-general \
-             --output-dir "data/Antismash/{wildcards.samples}" \
-             -t fungi \
-             --genefinding-gff {input.a} {input.b}
-
+        antismash --databases {input.db} --output-dir {output.out_dir} {input.gff}
         """

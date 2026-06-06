@@ -1,6 +1,6 @@
 #!/usr/bin/bash -l
 #SBATCH --job-name=BAGS
-#SBATCH --output=job_%j_%x.out
+#SBATCH --output=SNAKE_Joblogs/job_%j_%x.out
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
@@ -13,7 +13,7 @@
 # Exit on first error and if any variables are unset
 set -eu
 # Activate conda environment with only snakemake
-conda activate snakemake_WARP
+conda activate BAGS
 #snakemake --profile profile -s Snakefile 
 #snakemake --profile profile -s Snakefile --conda-frontend conda --use-conda --conda-create-envs-only
 # Start workflow using resources defined in the profile. Snakemake itself 

@@ -1,4 +1,4 @@
-name: snakemake_WARP
+name: BAGS
 channels:
   - bioconda
   - conda-forge

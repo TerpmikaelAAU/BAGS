@@ -1,23 +1,18 @@
-configfile: "config/config.yaml"
-
 rule busco:
     input:
-        a = rules.dorado_polish.output.a
+        proteins="data/GeneML_prediction/{genome}.faa",
     output:
-        dir = directory("data/busco/{input}/BUSCO"),
-    threads:
-        12
+        summary="data/busco/{genome}/short_summary.txt",
+        out_dir=directory("data/busco/{genome}"),
+    conda:
+        "../envs/BUSCO.yml"
+    threads: 8
     resources:
         mem_mb=resources["busco"]["mem_mb"],
         runtime=resources["busco"]["time"],
-        partition="general"
-        #
-    conda:
-       "../envs/BUSCO.yml"
     shell:
         """
-        
-        busco -i {input.a} -o {output.dir} -l fungi_odb12 -m geno -f -c $(nproc) --metaeuk --tar
-        
-        
+        busco -i {input.proteins} -o {wildcards.genome} \
+            --out_path data/busco -l fungi_odb12 -m proteins \
+            -c {threads}
         """
