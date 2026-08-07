@@ -6,7 +6,7 @@ rule geneml:
         proteins="data/GeneML_prediction/{genome}.faa",
     conda:
         "../envs/geneML.yml"
-    threads: 1
+    threads: 30
     resources:
         mem_mb=resources["GeneML"]["mem_mb"],
         runtime=resources["GeneML"]["time"],

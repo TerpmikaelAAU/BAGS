@@ -9,7 +9,7 @@ GB = 1024
 
 resources = {
     "antismash_database": {"mem_mb": 4 * GB, "time": "04:00:00"},
-    "GeneML": {"mem_mb": 96 * GB, "time": "03:00:00"},
+    "GeneML": {"mem_mb": 30 * GB, "time": "03:00:00"},
     "antismash": {"mem_mb": 64 * GB, "time": "03:00:00"},
     "NCBI_datasets": {"mem_mb": 4 * GB, "time": "04:00:00"},
     "busco": {"mem_mb": 8 * GB, "time": "01:00:00"},
@@ -41,6 +41,7 @@ rule all:
 # -----------------------------------------------------------------------------
 # INCLUDES
 # -----------------------------------------------------------------------------
+include: "workflow/rules/0_BUSCO_database.smk"
 include: "workflow/rules/0_Antismash_database.smk"
 include: "workflow/rules/0_NCBI_datasets.smk"
 include: "workflow/rules/1_geneML.smk"
