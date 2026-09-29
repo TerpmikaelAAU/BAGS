@@ -1,0 +1,19 @@
+# Figures and analyses for the near-T2T genome of Rhizopus microsporus var.
+# oligosporus CBS 337.62. See README.md for the figure -> rule map.
+
+
+configfile: "config/config.yaml"
+
+
+include: "rules/common.smk"
+include: "rules/genomes.smk"
+include: "rules/annotation_circos.smk"
+include: "rules/telomeres.smk"
+include: "rules/whole_genome_synteny.smk"
+include: "rules/longreads.smk"
+include: "rules/phylogeny.smk"
+
+
+rule all:
+    input:
+        all_targets(),

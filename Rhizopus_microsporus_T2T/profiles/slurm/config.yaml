@@ -1,0 +1,16 @@
+# Snakemake profile for the AAU BioCloud SLURM cluster
+# (https://cmc-aau.github.io/biocloud-docs/slurm/jobcontrol/).
+# Every rule runs as its own sbatch job; CPUs come from each rule's `threads`.
+executor: slurm
+jobs: 50
+use-conda: true
+conda-frontend: conda
+latency-wait: 60
+rerun-incomplete: true
+printshellcmds: true
+keep-going: true
+show-failed-logs: true
+default-resources:
+  slurm_partition: shared
+  mem_mb: 8000
+  runtime: 60
