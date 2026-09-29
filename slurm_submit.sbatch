@@ -7,8 +7,6 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=1G
 #SBATCH --time=3-00:00:00
-#SBATCH --mail-type=END,FAIL
-#SBATCH --mail-user=mter@bio.aau.dk
 
 # Exit on first error and if any variables are unset
 set -eu
