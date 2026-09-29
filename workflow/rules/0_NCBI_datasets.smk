@@ -12,12 +12,16 @@ checkpoint download_genomes:
     shell:
         """
         mkdir -p data/tmp
-        datasets download genome taxon "{params.taxon}" --filename data/tmp/dataset.zip
+        # GenBank only: RefSeq (GCF_) copies of GenBank assemblies would be analysed twice
+        datasets download genome taxon "{params.taxon}" --assembly-source GenBank --filename data/tmp/dataset.zip
         unzip -q data/tmp/dataset.zip -d data/tmp/extracted/
         
         # Flatten the directory structure
         mkdir -p {output.genome_dir}
         find data/tmp/extracted/ -name '*.fna' -exec cp {{}} {output.genome_dir}/ \\;
+
+        # Keep NCBI's metadata snapshot (species, strain, quality flags) for consolidate.py
+        cp data/tmp/extracted/ncbi_dataset/data/assembly_data_report.jsonl {output.genome_dir}/
         
         rm -rf data/tmp
         """
