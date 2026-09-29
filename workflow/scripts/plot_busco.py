@@ -8,9 +8,9 @@ jittered dot per assembly and a median line.
 Examples:
     python workflow/scripts/plot_busco.py data/consolidated/BAGS_assemblies.tsv
     python workflow/scripts/plot_busco.py data/consolidated/BAGS_assemblies.tsv \
-        --group-by species --exclude-atypical --out data/consolidated/busco_species
+        --group-by species --exclude-atypical-warning contaminated --out data/consolidated/busco_species
     python workflow/scripts/plot_busco.py data/consolidated/BAGS_assemblies.tsv \
-        --compare-unfiltered --exclude-atypical --min-busco-c 90
+        --compare-unfiltered --exclude-atypical-warning contaminated --min-busco-c 90
 """
 
 import argparse
@@ -38,17 +38,17 @@ INK, INK_SECONDARY, GRID, AXIS, SURFACE = "#0b0b0b", "#52514e", "#e1e0d9", "#c3c
 
 def read_table(path):
     table = pd.read_csv(path, sep="\t", keep_default_na=False, na_values=[""])
-    for column in ("busco_done", "is_atypical"):
-        table[column] = table[column].astype(str) == "True"
+    table["busco_done"] = table["busco_done"].astype(str) == "True"
     return table[table["twin_of"].isna()]
 
 
 def apply_filters(table, args):
     """Return the filtered table and a human-readable description of each filter."""
     kept, notes = table, []
-    if args.exclude_atypical:
-        kept = kept[~kept["is_atypical"]]
-        notes.append("NCBI-atypical excluded")
+    for warning in args.exclude_atypical_warning or []:
+        flagged = kept["atypical_warnings"].fillna("").str.contains(warning, case=False, regex=False)
+        kept = kept[~flagged]
+        notes.append(f"NCBI atypical '{warning}' excluded")
     if args.min_busco_c is not None:
         kept = kept[kept["busco_C"] >= args.min_busco_c]
         notes.append(f"BUSCO C ≥ {args.min_busco_c:g}%")
@@ -142,7 +142,9 @@ def main():
     parser.add_argument("--compare-unfiltered", action="store_true",
                         help="Show all assemblies next to the filtered set instead of grouping")
     filters = parser.add_argument_group("filters")
-    filters.add_argument("--exclude-atypical", action="store_true", help="Drop assemblies NCBI flags as atypical")
+    filters.add_argument("--exclude-atypical-warning", action="append", metavar="TEXT",
+                         help="Drop assemblies whose NCBI atypical warning contains TEXT, "
+                              "e.g. 'contaminated' (repeatable)")
     filters.add_argument("--min-busco-c", type=float, help="Drop assemblies with BUSCO Complete below this %%")
     filters.add_argument("--species", action="append", help="Keep only this species (repeatable)")
     args = parser.parse_args()

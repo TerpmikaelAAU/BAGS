@@ -23,8 +23,8 @@ This writes to `data/consolidated/`:
 `workflow/scripts/plot_busco.py` draws violin plots of the BUSCO categories from `BAGS_assemblies.tsv` (conda env: `workflow/envs/plotting.yml`):
 
 ```
-python workflow/scripts/plot_busco.py data/consolidated/BAGS_assemblies.tsv --group-by species --exclude-atypical --out busco_species
+python workflow/scripts/plot_busco.py data/consolidated/BAGS_assemblies.tsv --group-by species --exclude-atypical-warning contaminated --out busco_species
 python workflow/scripts/plot_busco.py data/consolidated/BAGS_assemblies.tsv --compare-unfiltered --min-busco-c 90 --out busco_compare
 ```
 
-Filters: `--exclude-atypical`, `--min-busco-c`, `--species` (repeatable). Each plot is saved as PNG, PDF and a TSV of the plotted values.
+Filters: `--exclude-atypical-warning TEXT` (repeatable; drops assemblies whose NCBI atypical warning contains TEXT, e.g. `contaminated`, so "genome length too large" assemblies can be kept), `--min-busco-c`, `--species` (repeatable). Each plot is saved as PNG, PDF and a TSV of the plotted values.
