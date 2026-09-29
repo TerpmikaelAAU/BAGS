@@ -20,9 +20,10 @@ This writes to `data/consolidated/`:
 - `BAGS_assemblies.tsv`: NCBI metadata (species, strain, assembly level, atypical flag, N50, ...), BUSCO percentages and BGC region counts per product class. RefSeq copies of GenBank assemblies are marked in `twin_of`.
 - `BAGS_bgc_regions.tsv`: one row per antiSMASH region with its product classes, a `bacterial_type` flag for bacterial product classes (e.g. endosymbiont contamination) and the region's GC content.
 
-`workflow/scripts/plot_busco.py` draws violin plots of the BUSCO categories from `BAGS_assemblies.tsv` (conda env: `workflow/envs/plotting.yml`):
+`workflow/scripts/plot_busco.py` draws violin plots of the BUSCO categories from `BAGS_assemblies.tsv`, by default with all assemblies of the taxon in one violin per category (conda env: `workflow/envs/plotting.yml`):
 
 ```
+python workflow/scripts/plot_busco.py data/consolidated/BAGS_assemblies.tsv --out busco_all
 python workflow/scripts/plot_busco.py data/consolidated/BAGS_assemblies.tsv --group-by species --exclude-atypical-warning contaminated --out busco_species
 python workflow/scripts/plot_busco.py data/consolidated/BAGS_assemblies.tsv --compare-unfiltered --min-busco-c 90 --out busco_compare
 ```
