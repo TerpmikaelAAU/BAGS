@@ -33,8 +33,8 @@ CATEGORIES = [
 # Categorical slots in fixed order; a group keeps its colour whatever is filtered out.
 PALETTE = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948"]
 OTHER_COLOR = "#898781"
-# Per-category colour schemes for the pooled plot (default: green-blue, so Complete is
-# green and Single-copy + Duplicated a light/dark blue pair). All keep BUSCO's yellow for
+# Per-category colour schemes for the pooled plot (default: green-purple, so Complete is
+# green, Single-copy blue and Duplicated purple). All keep BUSCO's yellow for
 # Fragmented and red for Missing (scripts/generate_plot.py). "busco" is BUSCO's own:
 # it has no colour for Complete, which it draws as S + D, so C gets the midpoint of
 # the two blues. The others take C, S and D from the Okabe-Ito palette, which BUSCO's
@@ -46,6 +46,7 @@ CATEGORY_SCHEMES = {
     "blue-purple": {"busco_C": "#0072B2", "busco_S": "#56B4E9", "busco_D": "#CC79A7", **_FM},
     "green-blue": {"busco_C": "#009E73", "busco_S": "#56B4E9", "busco_D": "#0072B2", **_FM},
     "grey-blue": {"busco_C": "#52514e", "busco_S": "#56B4E9", "busco_D": "#0072B2", **_FM},
+    "green-purple": {"busco_C": "#009E73", "busco_S": "#0072B2", "busco_D": "#6A3D9A", **_FM},
 }
 INK, INK_SECONDARY, GRID, AXIS, SURFACE = "#0b0b0b", "#52514e", "#e1e0d9", "#c3c2b7", "#fcfcfb"
 
@@ -157,7 +158,7 @@ def main():
     parser.add_argument("--compare-unfiltered", action="store_true",
                         help="Show all assemblies next to the filtered set instead of grouping")
     parser.add_argument("--category-colors", choices=[*CATEGORY_SCHEMES, "none"],
-                        help="Colour scheme for the categories of the pooled plot (default: green-blue); "
+                        help="Colour scheme for the categories of the pooled plot (default: green-purple); "
                              "'none' draws every category in one colour")
     filters = parser.add_argument_group("filters")
     filters.add_argument("--exclude-atypical-warning", action="append", metavar="TEXT",
@@ -201,7 +202,7 @@ def main():
     title = "BUSCO completeness" + (f" ({', '.join(lineage)})" if len(lineage) else "")
 
     draw(groups, order, colors, title, subtitle, args.group_by == "species", args.out,
-         None if args.group_by or args.compare_unfiltered else CATEGORY_SCHEMES.get(args.category_colors or "green-blue"))
+         None if args.group_by or args.compare_unfiltered else CATEGORY_SCHEMES.get(args.category_colors or "green-purple"))
 
     columns = ["assembly", "accession", "species", "group"] + [c for c, _ in CATEGORIES] + ["busco_n"]
     plotted[columns].to_csv(f"{args.out}.tsv", sep="\t", index=False)

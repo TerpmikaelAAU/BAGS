@@ -28,4 +28,4 @@ python workflow/scripts/plot_busco.py data/consolidated/BAGS_assemblies.tsv --gr
 python workflow/scripts/plot_busco.py data/consolidated/BAGS_assemblies.tsv --compare-unfiltered --min-busco-c 90 --out busco_compare
 ```
 
-Filters: `--exclude-atypical-warning TEXT` (repeatable; drops assemblies whose NCBI atypical warning contains TEXT, e.g. `contaminated`, so "genome length too large" assemblies can be kept), `--min-busco-c`, `--species` (repeatable). The pooled plot colours each category (`--category-colors`, default `green-blue`; BUSCO's yellow and red for Fragmented and Missing). Each plot is saved as PNG, PDF and a TSV of the plotted values.
+Filters: `--exclude-atypical-warning TEXT` (repeatable; drops assemblies whose NCBI atypical warning contains TEXT, e.g. `contaminated`, so "genome length too large" assemblies can be kept), `--min-busco-c`, `--species` (repeatable). The pooled plot colours each category (`--category-colors`, default `green-purple`; BUSCO's yellow and red for Fragmented and Missing). Each plot is saved as PNG, PDF and a TSV of the plotted values.
