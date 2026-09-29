@@ -1,0 +1,7 @@
+results/
+logs/*
+!logs/.gitkeep
+.snakemake/
+__pycache__/
+*.pyc
+.ruff_cache/

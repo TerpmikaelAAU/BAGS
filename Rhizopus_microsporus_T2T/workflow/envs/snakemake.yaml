@@ -1,0 +1,9 @@
+# Environment for the Snakemake controller job (run_workflow.sbatch)
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.12
+  - snakemake=9.27.0
+  - snakemake-executor-plugin-slurm=2.8.0
+  - conda

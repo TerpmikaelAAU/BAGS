@@ -1,0 +1,14 @@
+# UFCG and the external tools it calls. UFCG downloads its core-gene
+# database into the environment on first use.
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - ufcg=1.0.6
+  - openjdk=21
+  - augustus
+  - mmseqs2
+  - mafft
+  - iqtree
+  - fasttree
+  - raxml
