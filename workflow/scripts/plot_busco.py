@@ -33,6 +33,20 @@ CATEGORIES = [
 # Categorical slots in fixed order; a group keeps its colour whatever is filtered out.
 PALETTE = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948"]
 OTHER_COLOR = "#898781"
+# Per-category colour schemes for the pooled plot (default: green-blue, so Complete is
+# green and Single-copy + Duplicated a light/dark blue pair). All keep BUSCO's yellow for
+# Fragmented and red for Missing (scripts/generate_plot.py). "busco" is BUSCO's own:
+# it has no colour for Complete, which it draws as S + D, so C gets the midpoint of
+# the two blues. The others take C, S and D from the Okabe-Ito palette, which BUSCO's
+# yellow and sky blue come from.
+_FM = {"busco_F": "#F0E442", "busco_M": "#F04442"}
+CATEGORY_SCHEMES = {
+    "busco": {"busco_C": "#45A3D8", "busco_S": "#56B4E9", "busco_D": "#3492C7", **_FM},
+    "blue-green": {"busco_C": "#0072B2", "busco_S": "#56B4E9", "busco_D": "#009E73", **_FM},
+    "blue-purple": {"busco_C": "#0072B2", "busco_S": "#56B4E9", "busco_D": "#CC79A7", **_FM},
+    "green-blue": {"busco_C": "#009E73", "busco_S": "#56B4E9", "busco_D": "#0072B2", **_FM},
+    "grey-blue": {"busco_C": "#52514e", "busco_S": "#56B4E9", "busco_D": "#0072B2", **_FM},
+}
 INK, INK_SECONDARY, GRID, AXIS, SURFACE = "#0b0b0b", "#52514e", "#e1e0d9", "#c3c2b7", "#fcfcfb"
 
 
@@ -73,7 +87,7 @@ def assign_groups(table, full, column, min_size):
     return labels, order, colors
 
 
-def draw(groups, order, colors, title, subtitle, italic_labels, out):
+def draw(groups, order, colors, title, subtitle, italic_labels, out, category_colors=None):
     order = [g for g in order if g in groups and len(groups[g])]
     n_groups = len(order)
     slot = 0.8 / n_groups
@@ -84,8 +98,8 @@ def draw(groups, order, colors, title, subtitle, italic_labels, out):
 
     for gi, group in enumerate(order):
         data = groups[group]
-        color = colors[group]
         for ci, (column, _) in enumerate(CATEGORIES):
+            color = category_colors[column] if category_colors else colors[group]
             values = data[column].to_numpy(dtype=float)
             x = ci - 0.4 + slot * (gi + 0.5)
             if len(values) >= 2 and np.ptp(values) > 0:
@@ -94,10 +108,11 @@ def draw(groups, order, colors, title, subtitle, italic_labels, out):
                 for body in parts["bodies"]:
                     body.set_facecolor(color)
                     body.set_edgecolor(color)
-                    body.set_alpha(0.28)
+                    body.set_alpha(0.5 if category_colors else 0.28)
                     body.set_linewidth(1)
             jitter = rng.uniform(-slot * 0.22, slot * 0.22, len(values))
-            ax.scatter(x + jitter, values, s=9, color=color, alpha=0.85, linewidths=0, zorder=3)
+            ax.scatter(x + jitter, values, s=9, color=color, alpha=0.85, zorder=3,
+                       edgecolors=INK_SECONDARY if category_colors else "none", linewidths=0.3)
             median = np.median(values)
             ax.hlines(median, x - slot * 0.3, x + slot * 0.3, color=INK, linewidth=1.5, zorder=4)
 
@@ -141,6 +156,9 @@ def main():
                         help="Groups smaller than this are pooled as 'Other' (default: 5)")
     parser.add_argument("--compare-unfiltered", action="store_true",
                         help="Show all assemblies next to the filtered set instead of grouping")
+    parser.add_argument("--category-colors", choices=[*CATEGORY_SCHEMES, "none"],
+                        help="Colour scheme for the categories of the pooled plot (default: green-blue); "
+                             "'none' draws every category in one colour")
     filters = parser.add_argument_group("filters")
     filters.add_argument("--exclude-atypical-warning", action="append", metavar="TEXT",
                          help="Drop assemblies whose NCBI atypical warning contains TEXT, "
@@ -151,6 +169,8 @@ def main():
 
     if args.group_by and args.compare_unfiltered:
         parser.error("use either --group-by or --compare-unfiltered, not both")
+    if args.category_colors not in (None, "none") and (args.group_by or args.compare_unfiltered):
+        parser.error("--category-colors colours categories, so it only works on the pooled plot")
 
     full = read_table(args.table)
     pending = int((~full["busco_done"]).sum())
@@ -180,7 +200,8 @@ def main():
     lineage = full["busco_lineage"].dropna().unique()
     title = "BUSCO completeness" + (f" ({', '.join(lineage)})" if len(lineage) else "")
 
-    draw(groups, order, colors, title, subtitle, args.group_by == "species", args.out)
+    draw(groups, order, colors, title, subtitle, args.group_by == "species", args.out,
+         None if args.group_by or args.compare_unfiltered else CATEGORY_SCHEMES.get(args.category_colors or "green-blue"))
 
     columns = ["assembly", "accession", "species", "group"] + [c for c, _ in CATEGORIES] + ["busco_n"]
     plotted[columns].to_csv(f"{args.out}.tsv", sep="\t", index=False)
