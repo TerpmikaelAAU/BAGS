@@ -1,0 +1,11 @@
+# Package list of the `ncbi` container image in config/config.yaml, built with
+# Seqera Containers (https://seqera.io/containers/) from conda-forge + bioconda:
+#   docker://community.wave.seqera.io/library/ncbi-datasets-cli_unzip:55fdb7d2d283940e
+# Versions are the ones inside that image. To rebuild or change the image,
+# paste this list into seqera.io/containers and put the new URI in the config.
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - ncbi-datasets-cli=18.38.0
+  - unzip=6.0

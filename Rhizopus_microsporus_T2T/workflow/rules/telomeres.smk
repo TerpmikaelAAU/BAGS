@@ -5,8 +5,8 @@ rule tidk_search:
         f"{RESULTS}/telomeres/{{genome}}/{{genome}}_{{motif}}_telomeric_repeat_windows.tsv",
     log:
         f"{RESULTS}/logs/tidk_search/{{genome}}_{{motif}}.log",
-    conda:
-        conda_env("tidk")
+    container:
+        container_image("tidk")
     resources:
         mem_mb=4000,
         runtime=60,
@@ -27,8 +27,8 @@ rule telomere_finder:
         f"{RESULTS}/telomere_finder/{{genome}}/{{genome}}_candidate_scores.tsv",
     log:
         f"{RESULTS}/logs/telomere_finder/{{genome}}.log",
-    conda:
-        conda_env("tidk")
+    container:
+        container_image("tidk")
     resources:
         mem_mb=8000,
         runtime=120,

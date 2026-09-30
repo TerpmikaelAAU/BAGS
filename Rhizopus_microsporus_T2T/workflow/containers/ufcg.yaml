@@ -1,0 +1,20 @@
+# Package list of the `ufcg` container image in config/config.yaml, built with
+# Seqera Containers (https://seqera.io/containers/) from conda-forge + bioconda:
+#   docker://community.wave.seqera.io/library/ufcg_openjdk_augustus_mmseqs2_pruned:2cceed264718ef27
+# Versions are the ones inside that image. To rebuild or change the image,
+# paste this list into seqera.io/containers and put the new URI in the config.
+# The UFCG core-gene database is not in the image; rule ufcg_resources fetches
+# it (or copies phylogeny.ufcg_config) into results/phylogeny/ufcg/config.
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - ufcg=1.0.6
+  - openjdk=21.0.9
+  - augustus=3.5.0
+  - mmseqs2=18.8cc5c
+  - mafft=7.526
+  - iqtree=3.1.4
+  - fasttree=2.2.0
+  - raxml=8.2.13
+  - file=5.48          # UFCG runs `file -b` to tell folders from files

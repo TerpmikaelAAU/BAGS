@@ -3,8 +3,11 @@
 # Every rule runs as its own sbatch job; CPUs come from each rule's `threads`.
 executor: slurm
 jobs: 50
-use-conda: true
-conda-frontend: conda
+# Every rule runs in its container (containers/<name>.sif, see pull_containers.sh).
+# On BioCloud /home, /projects, /raw_data and /databases are mounted in the
+# containers; elsewhere, mount the folders your data/ symlinks point to with
+# apptainer-args: "--bind /path/to/data"
+software-deployment-method: apptainer
 latency-wait: 60
 rerun-incomplete: true
 printshellcmds: true

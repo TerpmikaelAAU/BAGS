@@ -1,5 +1,8 @@
 # Configuration for the Rhizopus microsporus var. oligosporus CBS 337.62 workflow.
-# Relative paths are relative to the repository root (where you run snakemake).
+# Relative paths are relative to the Rhizopus_microsporus_T2T/ folder, which is
+# where snakemake (and run_workflow.sbatch) runs. The only input files you
+# supply are the `gbk` and `fasta` files under `annotated_genomes` (and
+# `long_reads.fastq` if you set it); everything else is downloaded.
 
 results: results
 
@@ -11,15 +14,19 @@ targets:
   phylogeny: true              # UFCG tree
   telomere_finder: true        # tidk motif search for every annotated genome
 
-# Conda environment per tool group. A value ending in .yaml is a file in
-# workflow/envs/ (built by snakemake --use-conda); any other value is the
-# name of an existing conda environment, e.g. `ufcg: UFCG`.
-conda_envs:
-  circos: ../envs/circos.yaml
-  tidk: ../envs/tidk.yaml
-  reads: ../envs/reads.yaml
-  ncbi: ../envs/ncbi.yaml
-  ufcg: ../envs/ufcg.yaml
+# Container image per tool group. Every rule runs in one of these with
+# Apptainer; no conda environments are built. Run `bash pull_containers.sh` on
+# a login node once to pull the images into `folder` as <name>.sif (BioCloud
+# cannot build .sif files inside SLURM jobs). The images were built by Seqera
+# Containers from the package lists in workflow/containers/<name>.yaml.
+containers:
+  folder: containers
+  images:
+    circos: docker://community.wave.seqera.io/library/python_pycirclize_pygenomeviz_biopython_pruned:c4d6db338508919f
+    tidk: docker://community.wave.seqera.io/library/tidk_python:c6028460f1a33d71
+    reads: docker://community.wave.seqera.io/library/minimap2_chopper_seqkit_pigz_curl:c8011be91249b66e
+    ncbi: docker://community.wave.seqera.io/library/ncbi-datasets-cli_unzip:55fdb7d2d283940e
+    ufcg: docker://community.wave.seqera.io/library/ufcg_openjdk_augustus_mmseqs2_pruned:2cceed264718ef27
 
 # ---------------------------------------------------------------------------
 # Public assemblies, downloaded with NCBI datasets into
@@ -39,7 +46,7 @@ ncbi_genomes:
 # ---------------------------------------------------------------------------
 # Annotated genomes drawn with annotation_circos.py (gene tracks, telomeres,
 # nucmer --maxmatch self-alignment). The GenBank files are the funannotate
-# outputs (with antiSMASH and CAZy notes); see README "Input data".
+# outputs (with antiSMASH and CAZy notes); see README "Input files".
 #
 #   gbk             annotated GenBank file
 #   fasta           sequence for the self-alignment; default = the GenBank sequence
@@ -167,3 +174,9 @@ phylogeny:
   # out of the gene trees by default. true = `ufcg tree -c` (align multi-copy genes too).
   align_multicopy: true
   threads: 30
+  # UFCG's core-gene database (its `config/` folder, about 135 MB). Empty = the
+  # workflow downloads it from the UFCG server (rule ufcg_resources). If that
+  # server refuses (HTTP 429), point this to an existing copy instead, e.g. the
+  # one in a conda env where UFCG has run before:
+  #   <env>/share/ufcg-1.0.6-0/config
+  ufcg_config: ""

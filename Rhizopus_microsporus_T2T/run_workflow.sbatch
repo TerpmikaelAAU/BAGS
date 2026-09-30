@@ -7,7 +7,8 @@
 #SBATCH --output=logs/snakemake_%j.log
 #
 # Snakemake controller job. It only schedules: every rule is submitted as a
-# separate SLURM job through profiles/slurm. Run from the repository root:
+# separate SLURM job through profiles/slurm and runs in its Apptainer
+# container. Run from the Rhizopus_microsporus_T2T/ folder:
 #
 #   sbatch run_workflow.sbatch                 # everything in config/config.yaml
 #   sbatch run_workflow.sbatch -n              # dry run
@@ -19,5 +20,7 @@ set -euo pipefail
 SNAKEMAKE_ENV=${SNAKEMAKE_ENV:-snakemake_rhizopus}   # conda env from workflow/envs/snakemake.yaml
 eval "$(conda shell.bash hook)"
 conda activate "$SNAKEMAKE_ENV"
+
+command -v apptainer >/dev/null || { echo "apptainer not found on $(hostname)" >&2; exit 1; }
 
 snakemake --profile profiles/slurm "$@"
