@@ -6,8 +6,8 @@ rule download_reads:
         f"{READS_DIR}/{{run}}.fastq.gz",
     log:
         f"{RESULTS}/logs/download_reads/{{run}}.log",
-    conda:
-        conda_env("reads")
+    container:
+        container_image("reads")
     resources:
         mem_mb=2000,
         runtime=24 * 60,
@@ -35,8 +35,8 @@ rule ultralong_reads:
         f"{READS_DIR}/ultralong.fastq.gz",
     log:
         f"{RESULTS}/logs/ultralong_reads.log",
-    conda:
-        conda_env("reads")
+    container:
+        container_image("reads")
     threads: 8
     resources:
         mem_mb=8000,
@@ -57,8 +57,8 @@ rule depth_reads:
         f"{READS_DIR}/min{LONG_READS['depth_min_length']}.fastq.gz",
     log:
         f"{RESULTS}/logs/depth_reads.log",
-    conda:
-        conda_env("reads")
+    container:
+        container_image("reads")
     threads: 8
     resources:
         mem_mb=8000,
@@ -77,8 +77,8 @@ rule map_long_reads:
         f"{READS_DIR}/{{readset}}.paf",
     log:
         f"{RESULTS}/logs/map_long_reads/{{readset}}.log",
-    conda:
-        conda_env("reads")
+    container:
+        container_image("reads")
     threads: 32
     resources:
         mem_mb=64000,
@@ -97,8 +97,8 @@ rule longread_coverage_circos:
         f"{RESULTS}/figures/longread_coverage/{{group}}.png",
     log:
         f"{RESULTS}/logs/longread_coverage_circos/{{group}}.log",
-    conda:
-        conda_env("circos")
+    container:
+        container_image("circos")
     resources:
         mem_mb=16000,
         runtime=60,

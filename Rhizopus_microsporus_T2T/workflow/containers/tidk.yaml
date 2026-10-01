@@ -1,0 +1,11 @@
+# Package list of the `tidk` container image in config/config.yaml, built with
+# Seqera Containers (https://seqera.io/containers/) from conda-forge + bioconda:
+#   docker://community.wave.seqera.io/library/tidk_python:c6028460f1a33d71
+# Versions are the ones inside that image. To rebuild or change the image,
+# paste this list into seqera.io/containers and put the new URI in the config.
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - tidk=0.2.65
+  - python=3.12.14

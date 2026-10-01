@@ -1,0 +1,17 @@
+# Package list of the `circos` container image in config/config.yaml, built with
+# Seqera Containers (https://seqera.io/containers/) from conda-forge + bioconda:
+#   docker://community.wave.seqera.io/library/python_pycirclize_pygenomeviz_biopython_pruned:c4d6db338508919f
+# Versions are the ones inside that image. To rebuild or change the image,
+# paste this list into seqera.io/containers and put the new URI in the config.
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.12.14
+  - pycirclize=1.9.0
+  - pygenomeviz=1.7.0
+  - biopython=1.88
+  - pandas=3.0.6
+  - numpy=2.5.3
+  - matplotlib-base=3.11.2
+  - mummer=3.23

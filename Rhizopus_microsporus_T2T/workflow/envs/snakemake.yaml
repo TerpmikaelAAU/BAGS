@@ -1,4 +1,5 @@
-# Environment for the Snakemake controller job (run_workflow.sbatch)
+# Environment for the Snakemake controller job (run_workflow.sbatch) only.
+# The rules themselves run in Apptainer containers (config/config.yaml).
 channels:
   - conda-forge
   - bioconda
@@ -6,4 +7,3 @@ dependencies:
   - python=3.12
   - snakemake=9.27.0
   - snakemake-executor-plugin-slurm=2.8.0
-  - conda

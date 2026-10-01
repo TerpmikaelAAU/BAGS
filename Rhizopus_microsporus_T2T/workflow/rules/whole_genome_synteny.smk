@@ -8,8 +8,8 @@ rule synteny_query_fasta:
         f"{RESULTS}/whole_genome_synteny/{WGS['query']}.fasta",
     log:
         f"{RESULTS}/logs/synteny_query_fasta.log",
-    conda:
-        conda_env("circos")
+    container:
+        container_image("circos")
     resources:
         mem_mb=4000,
         runtime=30,
@@ -30,8 +30,8 @@ rule whole_genome_synteny:
         f"{RESULTS}/figures/whole_genome_synteny.png",
     log:
         f"{RESULTS}/logs/whole_genome_synteny.log",
-    conda:
-        conda_env("circos")
+    container:
+        container_image("circos")
     resources:
         mem_mb=16000,
         runtime=240,

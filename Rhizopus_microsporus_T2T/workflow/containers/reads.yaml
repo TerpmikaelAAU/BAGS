@@ -1,0 +1,14 @@
+# Package list of the `reads` container image in config/config.yaml, built with
+# Seqera Containers (https://seqera.io/containers/) from conda-forge + bioconda:
+#   docker://community.wave.seqera.io/library/minimap2_chopper_seqkit_pigz_curl:c8011be91249b66e
+# Versions are the ones inside that image. To rebuild or change the image,
+# paste this list into seqera.io/containers and put the new URI in the config.
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - minimap2=2.30
+  - chopper=0.14.1
+  - seqkit=2.14.0
+  - pigz=2.8
+  - curl=8.22.0

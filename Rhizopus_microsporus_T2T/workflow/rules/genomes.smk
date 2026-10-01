@@ -3,8 +3,8 @@ rule download_ncbi_genome:
         f"{RESULTS}/genomes/ncbi/{{genome}}.fna",
     log:
         f"{RESULTS}/logs/download_ncbi_genome/{{genome}}.log",
-    conda:
-        conda_env("ncbi")
+    container:
+        container_image("ncbi")
     resources:
         mem_mb=2000,
         runtime=60,
@@ -12,6 +12,7 @@ rule download_ncbi_genome:
         accession=lambda w: NCBI[w.genome],
     shell:
         """
+        export SSL_CERT_FILE=/opt/conda/ssl/cacert.pem   # CA bundle inside the container
         tmp=$(mktemp -d)
         trap 'rm -rf "$tmp"' EXIT
         datasets download genome accession {params.accession} --include genome \
@@ -28,8 +29,8 @@ rule annotated_genome_fasta:
         f"{RESULTS}/genomes/annotated/{{genome}}.fasta",
     log:
         f"{RESULTS}/logs/annotated_genome_fasta/{{genome}}.log",
-    conda:
-        conda_env("circos")
+    container:
+        container_image("circos")
     resources:
         mem_mb=4000,
         runtime=30,

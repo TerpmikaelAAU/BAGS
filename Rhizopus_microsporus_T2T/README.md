@@ -6,9 +6,10 @@ Code for the figures and genome analyses in
 > var. *oligosporus* CBS 337.62. *Mycological Progress* (in preparation).
 
 Everything in this folder is one [Snakemake](https://snakemake.readthedocs.io)
-workflow. Each rule has its own conda environment (`workflow/envs/`), and on a
-SLURM cluster every rule runs as a separate job. Run all commands below from
-this folder (`cd Rhizopus_microsporus_T2T`).
+workflow. Every rule runs in a pinned Apptainer container (no conda
+environments), and on a SLURM cluster every rule runs as a separate job. Run
+all commands below from this folder (`cd Rhizopus_microsporus_T2T`); all
+relative paths are relative to it.
 
 The BUSCO scores and the BUSCO violin plot come from the BAGS workflow in the
 [repository root](../README.md).
@@ -18,7 +19,7 @@ The BUSCO scores and the BUSCO violin plot come from the BAGS workflow in the
 | Manuscript figure | Output (`results/figures/`) | Rule | Script |
 |---|---|---|---|
 | BUSCO completeness (violin plot) | BAGS, see the [repository root](../README.md) | `3_BUSCO.smk` | `../workflow/scripts/plot_busco.py` |
-| UFCG phylogeny with GSI values | `ufcg_tree.png` | `ufcg_profile` → `ufcg_tree` → `plot_ufcg_tree` | `plot_ufcg_tree.py` |
+| UFCG phylogeny with GSI values | `ufcg_tree.png` | `ufcg_resources` → `ufcg_profile` → `ufcg_tree` → `plot_ufcg_tree` | `plot_ufcg_tree.py` |
 | Whole-genome synteny CBS 337.62 vs RT-3 | `whole_genome_synteny.png` | `whole_genome_synteny` | `whole_genome_synteny.py` |
 | Annotation circos of CBS 337.62 | `annotation_circos/R_microsporus_CBS_337.62.png` | `nucmer_self_links`, `tidk_search` → `annotation_circos` | `annotation_circos.py` |
 | Long-read support, chr_1 + chr_2 (main) and chr_3–13 (supplementary) | `longread_coverage/<chromosomes>.png` | `download_reads` → `ultralong_reads` / `depth_reads` → `map_long_reads` → `longread_coverage_circos` | `longread_coverage_circos.py` |
@@ -46,25 +47,23 @@ The BUSCO scores and the BUSCO violin plot come from the BAGS workflow in the
   protein alignment. Node labels are GSI values (the number of gene trees that
   support the split) and the tree is rooted on *R. stolonifer*.
 
-## Data
+## Input files
 
-Downloaded by the workflow:
+The only files you supply are the funannotate GenBank files (with the antiSMASH
+and CAZy notes the gene tracks are drawn from) and, for the comparison genomes,
+their soft-masked assemblies. They are not public. Put them at these paths
+(set in `config/config.yaml`, `annotated_genomes`):
 
-| Data | Source |
-|---|---|
-| CBS 337.62 assembly | NCBI GCA_060230415.1 |
-| Comparison assemblies | NCBI, accessions in `config/config.yaml` (`ncbi_genomes`) |
-| Nanopore reads of CBS 337.62 | ENA/SRA run in `config/config.yaml` (`long_reads.run`), BioProject PRJNA1389883 |
-
-Supplied by you: the funannotate GenBank files, including the antiSMASH and
-CAZy notes the gene tracks are drawn from. They are not public; put them in
-`data/annotation/` with the file names used in `config/config.yaml`:
-
-| File | Content |
-|---|---|
-| `Rhizopus_microsporus_var._oligosporus_337.62.gbk` | funannotate annotation of CBS 337.62 (with antiSMASH and CAZy notes) |
-| `Rhizopus_microsporus.Redundans.gbk` | same, for the Redundans duplication-reduced assembly |
-| `<genome>.gbk`, `<genome>_masked.fasta` | funannotate annotation and soft-masked assembly of each comparison genome |
+| Path | Needed for | Content |
+|---|---|---|
+| `data/annotation/Rhizopus_microsporus_var._oligosporus_337.62.gbk` | all figures except the tree | funannotate annotation of CBS 337.62 |
+| `data/annotation/Rhizopus_microsporus.Redundans.gbk` | annotation circos, telomere finder | same, for the Redundans duplication-reduced assembly |
+| `data/annotation/Rhizopus_arrhizus_Z10C7.gbk` + `_masked.fasta` | annotation circos, telomere finder | comparison genome |
+| `data/annotation/Rhizopus_delemar_SE_PDA7.gbk` + `_masked.fasta` | annotation circos, telomere finder | comparison genome |
+| `data/annotation/Rhizopus_microsporus_gzRhiMicr1_genomic.gbk` + `_masked.fasta` | annotation circos, telomere finder | comparison genome |
+| `data/annotation/Rhizopus_microsporus_MLY36.gbk` + `_masked.fasta` | annotation circos, telomere finder | comparison genome |
+| `data/annotation/Rhizopus_microsporus_var._oligosporus_RT-3.gbk` + `_masked.fasta` | annotation circos, telomere finder | comparison genome |
+| `data/annotation/Rhizopus_stolonifer_PRFJ02.gbk` + `_masked.fasta` | annotation circos, telomere finder | comparison genome |
 
 Symlinks are fine:
 
@@ -73,23 +72,72 @@ mkdir -p data/annotation
 ln -s /path/to/funannotate_results/<genome>/predict/annotate_results/<genome>.gbk data/annotation/
 ```
 
-`data/` is not tracked by git.
+The link targets must be visible inside the containers. On BioCloud `/home`,
+`/projects`, `/raw_data` and `/databases` are; on other systems add
+`--apptainer-args "--bind /path/to/data"`.
+
+When the workflow starts it lists any of these files that are missing. To
+leave a figure out, switch it off under `targets` in the config. `data/` is not
+tracked by git.
+
+Downloaded by the workflow (nothing to do):
+
+| Data | Source | Saved as |
+|---|---|---|
+| CBS 337.62 and comparison assemblies | NCBI, accessions in `config/config.yaml` (`ncbi_genomes`) | `results/genomes/ncbi/<name>.fna` |
+| Nanopore reads of CBS 337.62 | ENA run `long_reads.run` in the config, BioProject PRJNA1389883 | `results/long_reads/<run>.fastq.gz` |
+| UFCG core-gene database (about 135 MB) | `https://ufcg.steineggerlab.workers.dev/payload/` (`config` + `core`) | `results/phylogeny/ufcg/config/` |
+
+To use reads you already have, set `long_reads.fastq` to a local (gzipped)
+FASTQ instead.
+
+The UFCG server sometimes answers HTTP 429 (too many requests); then
+`ufcg_resources` fails with that code in `results/logs/ufcg_resources.log`.
+Wait and rerun, or set `phylogeny.ufcg_config` to an existing UFCG `config/`
+folder (for example `<conda env>/share/ufcg-1.0.6-0/config` from a UFCG
+install that has run before); it is copied instead of downloaded.
+
+## Containers
+
+Each tool group has one container image, listed in `config/config.yaml`
+(`containers.images`). The images were built with
+[Seqera Containers](https://seqera.io/containers/) from the package lists in
+`workflow/containers/`, which also give the exact tool versions. They are
+pulled once into `containers/<name>.sif` (about 2 GB in total):
+
+| Image | Tools | Rules |
+|---|---|---|
+| `circos` | pyCirclize, pyGenomeViz, Biopython, MUMmer | plots, `nucmer_self_links`, GenBank → FASTA |
+| `tidk` | tidk | `tidk_search`, `telomere_finder` |
+| `reads` | minimap2, chopper, SeqKit, curl | long-read download, filtering and mapping, `ufcg_resources` |
+| `ncbi` | NCBI datasets | `download_ncbi_genome` |
+| `ufcg` | UFCG with AUGUSTUS, MMseqs2, MAFFT, IQ-TREE | `ufcg_profile`, `ufcg_tree` |
 
 ## Running
 
 ### 1. Install Snakemake
 
+Only Snakemake itself is installed with conda:
+
 ```bash
 conda env create -n snakemake_rhizopus -f workflow/envs/snakemake.yaml
 ```
 
-### 2. Add the annotation files
+### 2. Add the input files
 
-Put the annotation files in `data/annotation/` (see [Data](#data)) and
-check `config/config.yaml`. To build only some of the figures, switch parts
-off under `targets`.
+See [Input files](#input-files).
 
-### 3. Run on SLURM (AAU BioCloud)
+### 3. Pull the container images (login node)
+
+BioCloud cannot build `.sif` files inside SLURM jobs, so pull them on the
+login node first:
+
+```bash
+conda activate snakemake_rhizopus
+bash pull_containers.sh
+```
+
+### 4. Run on SLURM (AAU BioCloud)
 
 The controller runs as a small SLURM job, and it submits every rule as its own
 job through `profiles/slurm`:
@@ -112,10 +160,12 @@ The partition (`shared`) and the default resources are set in
 the rules; the longest job is the self-alignment, whose limit is
 `nucmer_hours` in the config.
 
-### 4. Run locally
+### 5. Run locally
+
+With Apptainer installed, after step 3:
 
 ```bash
-snakemake --use-conda -c 16
+snakemake --sdm apptainer -c 16
 ```
 
 ### Run times
@@ -126,7 +176,7 @@ On 16 cores:
 |---|---|
 | Annotation circos plot, synteny plot, telomere search | minutes |
 | `nucmer --maxmatch` self-alignment | 1–3 days per genome; about a week for the repeat-rich *R. stolonifer* |
-| UFCG profile of 9 genomes | hours |
+| UFCG profile and tree of 9 genomes | about 20 minutes |
 
 ## Layout
 
@@ -135,17 +185,22 @@ config/config.yaml        genomes, accessions, parameters
 workflow/Snakefile        entry point
 workflow/rules/*.smk      rules, one file per analysis
 workflow/scripts/*.py     plotting and helper scripts (each has --help)
-workflow/envs/*.yaml      conda environments
+workflow/containers/*.yaml  package lists of the container images
+workflow/envs/snakemake.yaml  conda environment for Snakemake itself
 profiles/slurm/           Snakemake SLURM profile
+pull_containers.sh        pulls the container images (login node)
 run_workflow.sbatch       SLURM controller job
+data/annotation/          your input files (not in git)
+containers/               pulled .sif images (not in git)
+results/                  all outputs (not in git)
 ```
 
 ## Software
 
 pyCirclize 1.9.0, pyGenomeViz 1.7.0, MUMmer 3.23, tidk 0.2.65,
-UFCG 1.0.6 (with AUGUSTUS, MMseqs2, MAFFT, IQ-TREE), minimap2 2.30,
-chopper 0.14.1, SeqKit 2.14.0, NCBI datasets 18.38.0, Snakemake 9.27.0.
-Exact versions are pinned in `workflow/envs/`.
+UFCG 1.0.6 (with AUGUSTUS 3.5.0, MMseqs2 18.8cc5c, MAFFT 7.526, IQ-TREE 3.1.4), minimap2 2.30,
+chopper 0.14.1, SeqKit 2.14.0, NCBI datasets 18.38.0, Snakemake 9.27.0, Apptainer.
+Exact versions are listed in `workflow/containers/`.
 
 ## License
 

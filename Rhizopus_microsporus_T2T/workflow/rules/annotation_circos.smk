@@ -5,8 +5,8 @@ rule nucmer_self_links:
         f"{RESULTS}/self_alignment/{{genome}}_self_links.tsv",
     log:
         f"{RESULTS}/logs/nucmer_self_links/{{genome}}.log",
-    conda:
-        conda_env("circos")
+    container:
+        container_image("circos")
     resources:
         mem_mb=50000,
         runtime=lambda w: 60 * ANNOTATED[w.genome].get("nucmer_hours", 48),
@@ -29,8 +29,8 @@ rule annotation_circos:
         f"{RESULTS}/figures/annotation_circos/{{genome}}.png",
     log:
         f"{RESULTS}/logs/annotation_circos/{{genome}}.log",
-    conda:
-        conda_env("circos")
+    container:
+        container_image("circos")
     resources:
         mem_mb=16000,
         runtime=60,
