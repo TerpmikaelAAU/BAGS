@@ -1,0 +1,2 @@
+# One NCBI assembly accession per line. Point Accessions_file in config.yaml here to use it.
+# GCA_000149305.1

@@ -1,6 +1,6 @@
 # BAGS
 
-BAGS predicts genes, biosynthetic gene clusters and BUSCO completeness for every NCBI assembly of a taxon, and consolidates the results for comparison across species.
+BAGS predicts genes, biosynthetic gene clusters and BUSCO completeness for every NCBI assembly of a taxon and/or a list of assembly accessions, and consolidates the results for comparison across species.
 
 ## Language
 
