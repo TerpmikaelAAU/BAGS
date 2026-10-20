@@ -1,2 +1,12 @@
+# Assemblies to analyse. Set Taxon, Accessions and/or Accessions_file; all given sources are combined.
 
+# Every GenBank assembly of this NCBI taxon (name or taxid). Leave as [] to use accessions only.
 Taxon: [Ganoderma lucidum]
+
+# Specific NCBI assembly accessions (GCA_ or GCF_), downloaded as given.
+Accessions: []
+#  - GCA_000149305.1
+#  - GCA_000271645.1
+
+# Optional text file with one accession per line (# starts a comment), e.g. config/accessions.txt
+Accessions_file: ""
