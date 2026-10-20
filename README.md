@@ -3,9 +3,9 @@
 ## Rhizopus microsporus CBS 337.62 genome figures
 The code for the circos, synteny, long-read and phylogeny figures of the near
 telomere-to-telomere *Rhizopus microsporus* var. *oligosporus* CBS 337.62
-genome is a separate Snakemake workflow in
-[`Rhizopus_microsporus_T2T/`](Rhizopus_microsporus_T2T/README.md). Its BUSCO
-violin plot comes from `workflow/scripts/plot_busco.py` below.
+genome is in its own repository,
+[Rhizopus_T2T_paper](https://github.com/TerpmikaelAAU/Rhizopus_T2T_paper). Its
+BUSCO violin plots are drawn from the BUSCO results of this workflow.
 
 ## Requirements
 All required tools are automatically installed by Snakemake using conda environments or singularity/apptainer containers, however Snakemake itself needs to be installed first. Load a software module with Snakemake, use a native install, or use the `environment.yml` file to create a conda environment for this particular project using fx `conda env create -n <snakemake_template> -f environment.yml`.
