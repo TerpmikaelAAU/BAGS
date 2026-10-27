@@ -27,6 +27,7 @@ rule get_geneml:
 rule geneml:
     input:
         # ancient: reinstalling geneML does not re-run every genome
+        # (a new GENEML_VERSION is a new path, so that still does)
         geneml=ancient(f"{GENEML_ENV}/bin/geneml"),
         fasta="data/genomes/{genome}.fna",
     output:
@@ -41,5 +42,5 @@ rule geneml:
         #gpus=1, GPU server is probally down
     shell:
         """
-        {input.geneml} {input.fasta} --output {output.gff} -p {output.proteins} -c 1 --cpu-only
+        {input.geneml} {input.fasta} --output {output.gff} -p {output.proteins} -c 1
         """
