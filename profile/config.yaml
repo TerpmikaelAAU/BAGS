@@ -3,7 +3,8 @@ executor: slurm
 software-deployment-method:
   - conda
 # Defaults for rules that do not set them. runtime is in minutes.
-# No slurm_partition: BioCloud picks the partition from the mem-per-CPU ratio.
+# No slurm_partition: the plugin uses the cluster default, and BioCloud
+# reassigns it from the mem-per-CPU ratio.
 default-resources:
   runtime: 60
   mem_mb: 512
