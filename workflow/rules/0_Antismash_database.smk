@@ -5,7 +5,7 @@ rule Antismash_database:
         12
     resources:
         mem_mb=resources["antismash_database"]["mem_mb"],
-        runtime=resources["antismash_database"]["time"]
+        runtime=resources["antismash_database"]["runtime"]
     conda:
         "../envs/Antismash.yml"
     shell:

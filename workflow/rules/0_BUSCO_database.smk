@@ -7,7 +7,7 @@ rule busco_database:
     threads: 1
     resources:
         mem_mb=4000,
-        time="01:00:00"
+        runtime=60
     shell:
         """
         # Download the database to a centralized location

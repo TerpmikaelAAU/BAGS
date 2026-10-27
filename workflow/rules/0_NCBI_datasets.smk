@@ -30,7 +30,7 @@ checkpoint download_genomes:
         "../envs/NCBI_datasets.yml"
     resources:
         mem_mb=resources["NCBI_datasets"]["mem_mb"],
-        runtime=resources["NCBI_datasets"]["time"],
+        runtime=resources["NCBI_datasets"]["runtime"],
     shell:
         """
         rm -rf data/tmp
