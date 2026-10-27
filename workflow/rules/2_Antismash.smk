@@ -6,8 +6,8 @@ rule antismash:
         gff="data/GeneML_prediction/{genome}.gff",
     output:
         out_dir=directory("data/Antismash/{genome}"),
-    conda:
-        "../envs/Antismash.yml" # Remember to keep the ../../ path we fixed earlier!
+    container:
+        ANTISMASH_CONTAINER
     threads: 8
     resources:
         mem_mb=resources["antismash"]["mem_mb"],
@@ -21,6 +21,6 @@ rule antismash:
              --cc-mibig --cb-general \
              --output-dir {output.out_dir} \
              -t fungi \
-             --genefinding-gff {input.gff} \
+             --genefinding-gff3 {input.gff} \
              {input.fasta}
         """

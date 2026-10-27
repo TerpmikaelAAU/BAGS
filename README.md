@@ -5,7 +5,7 @@ Predicts genes (GeneML), biosynthetic gene clusters (antiSMASH) and fungal BUSCO
 The *Rhizopus microsporus* CBS 337.62 genome figures are in [Rhizopus_T2T_paper](https://github.com/TerpmikaelAAU/Rhizopus_T2T_paper).
 
 ## Install
-Tools are installed by Snakemake from the conda envs in `workflow/envs/`. Snakemake 9 and its SLURM executor plugin come from `environment.yml`:
+Each tool runs in a pinned Apptainer container (set at the top of the `Snakefile`), so Apptainer must be on the compute nodes. GeneML has no container: the pipeline pip-installs it into `resources/`. Snakemake 9 and its SLURM executor plugin come from `environment.yml`:
 
 ```
 conda env create -n BAGS -f environment.yml
@@ -31,6 +31,8 @@ python workflow/scripts/plot_busco.py data/consolidated/BAGS_assemblies.tsv --gr
 Use `--exclude-atypical-warning contaminated` rather than dropping all atypical assemblies, so that "genome length too large" ones are kept. For other options, see `plot_busco.py --help` (conda env: `workflow/envs/plotting.yml`).
 
 ## Caveats
+- **Results from a conda run (before the Apptainer move) are re-run**, because the software env changed. Add `--rerun-triggers mtime` to keep them.
+- **antiSMASH uses the official `standalone-lite` image.** The biocontainer lacks the pre-built data and can't write it into its read-only install.
 - **Per-job SLURM logs are in `.snakemake/slurm_logs/`**, not `logs/{rule}/` as before Snakemake 9.
 - **Fungi only.** The BUSCO lineage is hard-coded to `fungi_odb12`.
 - **Only the first `Taxon` entry is used.** Any further entries are ignored without a warning.

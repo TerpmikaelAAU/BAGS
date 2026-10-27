@@ -5,8 +5,8 @@ rule busco:
     output:
         summary="data/busco/{genome}/short_summary.txt",
         out_dir=directory("data/busco/{genome}"),
-    conda:
-        "../envs/BUSCO.yml"
+    container:
+        BUSCO_CONTAINER
     threads: 8
     resources:
         mem_mb=resources["busco"]["mem_mb"],

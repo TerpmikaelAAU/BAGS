@@ -87,3 +87,7 @@ SNAKE_Joblogs/
 data/
 Logs/
 busco_downloads/
+resources/
+# Written into the workdir (the container HOME) by geneML's TensorFlow
+.keras/
+.cache/

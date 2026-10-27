@@ -4,8 +4,8 @@ rule generate_tree:
         genomes=get_all_genomes,
     output:
         tree="data/phylogeny/taxon_tree.nwk",
-    conda:
-        "../envs/mashtree.yml"
+    container:
+        MASHTREE_CONTAINER
     threads: 8
     resources:
         mem_mb=8000,

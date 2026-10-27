@@ -14,7 +14,27 @@ resources = {
     "antismash": {"mem_mb": 64 * GB, "runtime": 180},
     "NCBI_datasets": {"mem_mb": 4 * GB, "runtime": 240},
     "busco": {"mem_mb": 8 * GB, "runtime": 60},
+    "get_geneml": {"mem_mb": 8 * GB, "runtime": 120},
 }
+
+# -----------------------------------------------------------------------------
+# CONTAINERS
+# Every tool rule runs in a pinned image (profile: software-deployment-method:
+# apptainer). The summary rules only use the shell, so they run on the host.
+# -----------------------------------------------------------------------------
+NCBI_DATASETS_CONTAINER = "docker://staphb/ncbi-datasets:18.37.0"
+# antiSMASH: the official image, not the biocontainer. antiSMASH writes
+# pre-built data (e.g. bgc_seeds.hmm) into its own package directory, which
+# is read-only in a container; the official image ships it pre-built.
+ANTISMASH_CONTAINER = "docker://antismash/standalone-lite:8.0.4"
+BUSCO_CONTAINER = "docker://quay.io/biocontainers/busco:6.1.0--pyhdfd78af_2"
+MASHTREE_CONTAINER = "docker://quay.io/biocontainers/mashtree:1.4.6--pl5321h87e0c26_4"
+PYTHON_CONTAINER = "docker://python:3.12-slim"
+
+# geneML is only on PyPI (no container), so rule get_geneml installs it once
+# into resources/ inside the python image, and geneml runs from there.
+GENEML_VERSION = "1.3.1"
+GENEML_ENV = f"resources/geneml-{GENEML_VERSION}"
 
 # -----------------------------------------------------------------------------
 # DYNAMIC EVALUATION FUNCTIONS

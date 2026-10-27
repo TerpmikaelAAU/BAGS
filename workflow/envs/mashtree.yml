@@ -1,6 +1,0 @@
-name: mashtree
-channels:
-  - bioconda
-  - conda-forge
-dependencies:
-  - mashtree

@@ -26,8 +26,8 @@ checkpoint download_genomes:
     params:
         taxon=requested_taxon(),
         accessions=" ".join(requested_accessions()),
-    conda:
-        "../envs/NCBI_datasets.yml"
+    container:
+        NCBI_DATASETS_CONTAINER
     resources:
         mem_mb=resources["NCBI_datasets"]["mem_mb"],
         runtime=resources["NCBI_datasets"]["runtime"],
