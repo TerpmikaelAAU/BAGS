@@ -29,7 +29,7 @@ python workflow/scripts/plot_busco.py data/consolidated/BAGS_assemblies.tsv --gr
 Use `--exclude-atypical-warning contaminated` rather than dropping all atypical assemblies, so that "genome length too large" ones are kept. For other options, see `plot_busco.py --help` (conda env: `workflow/envs/plotting.yml`).
 
 ## Caveats
-- **Snakemake 7 only.** `environment.yml` pins 7.18.2. Snakemake 9.27.1 was tested and rejects both the profile (`--cluster-status` and `--cluster-cancel` were removed) and the `"HH:MM:SS"` runtimes in the `resources` dict in `Snakefile`.
+- **Snakemake 7 only.** `environment.yml` pins 7.18.2. Snakemake 9.27.1 was tested and rejects both the profile (`--cluster-status` and `--cluster-cancel` were removed) and the `"HH:MM:SS"` runtimes (the `resources` dict in `Snakefile` and the default in `profile/config.yaml`).
 - **Fungi only.** The BUSCO lineage is hard-coded to `fungi_odb12`.
 - **Only the first `Taxon` entry is used.** Any further entries are ignored without a warning.
 - **Taxon downloads are GenBank (`GCA_`) only.** Otherwise each RefSeq (`GCF_`) twin would be analysed a second time. Listed accessions are downloaded as given, `GCF_` included.
