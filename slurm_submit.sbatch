@@ -5,22 +5,20 @@
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=1G
+#SBATCH --mem=4G
 #SBATCH --time=3-00:00:00
 
 # Exit on first error and if any variables are unset
 set -eu
 # Activate conda environment with only snakemake
 conda activate BAGS
-#snakemake --profile profile -s Snakefile 
-#snakemake --profile profile -s Snakefile --conda-frontend conda --use-conda --conda-create-envs-only
-# Start workflow using resources defined in the profile. Snakemake itself 
-# requires nothing, 1CPU + 1G mem is enough
+# Snakemake submits each rule as its own SLURM job via the executor plugin,
+# so 1 CPU + 4G is enough here.
 
 # Render a DAG to visualize the workflow (optional)
 #snakemake --dag | dot -Tsvg > results/dag.svg
 
 # Main workflow
-snakemake --profile profile -s Snakefile --conda-frontend conda --use-conda 
-# Generate a report once finished (optional)
-#snakemake --report results/report.html
+snakemake --profile profile
+# If the run crashed and the directory is locked, run once with --unlock
+#snakemake --profile profile --unlock

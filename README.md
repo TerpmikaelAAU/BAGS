@@ -5,17 +5,19 @@ Predicts genes (GeneML), biosynthetic gene clusters (antiSMASH) and fungal BUSCO
 The *Rhizopus microsporus* CBS 337.62 genome figures are in [Rhizopus_T2T_paper](https://github.com/TerpmikaelAAU/Rhizopus_T2T_paper).
 
 ## Install
-Tools are installed by Snakemake from the conda envs in `workflow/envs/`. Snakemake itself comes from `environment.yml`:
+Tools are installed by Snakemake from the conda envs in `workflow/envs/`. Snakemake 9 and its SLURM executor plugin come from `environment.yml`:
 
 ```
 conda env create -n BAGS -f environment.yml
 ```
 
+An existing `BAGS` env from before the Snakemake 9 move must be removed (`conda env remove -n BAGS`) and created again.
+
 ## Configure and run
-Choose the assemblies in `config/config.yaml` (see its comments), and the SLURM partition and limits in `profile/config.yaml`. Then run `mkdir -p SNAKE_Joblogs` and submit `slurm_submit.sbatch`. Without that folder SLURM fails with no log. Or run directly:
+Choose the assemblies in `config/config.yaml` (see its comments), and the SLURM limits in `profile/config.yaml`. Then run `mkdir -p SNAKE_Joblogs` and submit `slurm_submit.sbatch`. Without that folder SLURM fails with no log. Or run directly:
 
 ```
-snakemake --profile profile -s Snakefile --conda-frontend conda --use-conda
+snakemake --profile profile
 ```
 
 ## Consolidate and plot
@@ -29,7 +31,7 @@ python workflow/scripts/plot_busco.py data/consolidated/BAGS_assemblies.tsv --gr
 Use `--exclude-atypical-warning contaminated` rather than dropping all atypical assemblies, so that "genome length too large" ones are kept. For other options, see `plot_busco.py --help` (conda env: `workflow/envs/plotting.yml`).
 
 ## Caveats
-- **Snakemake 7 only.** `environment.yml` pins 7.18.2. Snakemake 9.27.1 was tested and rejects both the profile (`--cluster-status` and `--cluster-cancel` were removed) and the `"HH:MM:SS"` runtimes (the `resources` dict in `Snakefile` and the default in `profile/config.yaml`).
+- **Per-job SLURM logs are in `.snakemake/slurm_logs/`**, not `logs/{rule}/` as before Snakemake 9.
 - **Fungi only.** The BUSCO lineage is hard-coded to `fungi_odb12`.
 - **Only the first `Taxon` entry is used.** Any further entries are ignored without a warning.
 - **Taxon downloads are GenBank (`GCA_`) only.** Otherwise each RefSeq (`GCF_`) twin would be analysed a second time. Listed accessions are downloaded as given, `GCF_` included.

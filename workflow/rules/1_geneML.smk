@@ -9,7 +9,7 @@ rule geneml:
     threads: 30
     resources:
         mem_mb=resources["GeneML"]["mem_mb"],
-        runtime=resources["GeneML"]["time"],
+        runtime=resources["GeneML"]["runtime"],
         #gpus=1, GPU server is probally down
     shell:
         """

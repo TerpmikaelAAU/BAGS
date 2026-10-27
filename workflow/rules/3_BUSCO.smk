@@ -10,7 +10,7 @@ rule busco:
     threads: 8
     resources:
         mem_mb=resources["busco"]["mem_mb"],
-        time=resources["busco"]["time"],
+        runtime=resources["busco"]["runtime"],
     shell:
         """
         # 1. Run BUSCO

@@ -7,7 +7,7 @@ rule summarize_genome:
     threads: 1
     resources:
         mem_mb=1000,
-        time="00:10:00",
+        runtime=10,
     shell:
         """
         # 1. Extract the BUSCO score string (e.g., C:98.5%[S:98.5%,D:0.0%],F:0.5%,M:1.0%,n:4046)
@@ -37,7 +37,7 @@ rule compile_summaries:
     threads: 1
     resources:
         mem_mb=1000,
-        time="00:10:00",
+        runtime=10,
     shell:
         """
         # Copy the header from the very first summary file

@@ -11,7 +11,7 @@ rule antismash:
     threads: 8
     resources:
         mem_mb=resources["antismash"]["mem_mb"],
-        runtime=resources["antismash"]["time"],
+        runtime=resources["antismash"]["runtime"],
     shell:
         """
         antismash \
