@@ -6,8 +6,8 @@ rule Antismash_database:
     resources:
         mem_mb=resources["antismash_database"]["mem_mb"],
         runtime=resources["antismash_database"]["runtime"]
-    conda:
-        "../envs/Antismash.yml"
+    container:
+        ANTISMASH_CONTAINER
     shell:
         """
         download-antismash-databases --database-dir data/databases/antismashdatabase
