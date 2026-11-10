@@ -5,6 +5,8 @@ rule busco:
     output:
         summary="data/busco/{genome}/short_summary.txt",
         out_dir=directory("data/busco/{genome}"),
+    params:
+        lineage_date=BUSCO_LINEAGE_DATE,
     container:
         BUSCO_CONTAINER
     threads: 8
@@ -13,6 +15,12 @@ rule busco:
         runtime=resources["busco"]["runtime"],
     shell:
         """
+        # An older run may have left a different fungi_odb12 release behind
+        grep -qx "creation_date={params.lineage_date}" {input.db}/dataset.cfg || {{
+            echo "{input.db} is not the {params.lineage_date} release; delete it to re-download" >&2
+            exit 1
+        }}
+
         # 1. Run BUSCO
         busco -i {input.proteins} -o {wildcards.genome} \
             --out_path data/busco \

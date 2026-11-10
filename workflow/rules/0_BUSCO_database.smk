@@ -8,8 +8,10 @@ rule busco_database:
     resources:
         mem_mb=4000,
         runtime=60
+    params:
+        date=BUSCO_LINEAGE_DATE,
+        md5=BUSCO_LINEAGE_MD5,
     shell:
         """
-        # Download the database to a centralized location
-        busco --download fungi_odb12 --download_path data/databases/busco_downloads
+        python workflow/scripts/get_busco_lineage.py fungi_odb12 {params.date} {params.md5} data/databases/busco_downloads
         """

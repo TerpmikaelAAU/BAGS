@@ -42,5 +42,5 @@ rule geneml:
         #gpus=1, GPU server is probally down
     shell:
         """
-        {input.geneml} {input.fasta} --output {output.gff} -p {output.proteins} -c 1
+        {input.geneml} {input.fasta} --output {output.gff} -p {output.proteins} -c 1 --cpu-only
         """
