@@ -18,7 +18,7 @@ lineages = Path(download_path) / "lineages"
 lineages.mkdir(parents=True, exist_ok=True)
 tarball = lineages / f"{name}.{date}.tar.gz"
 
-with urllib.request.urlopen(url) as response, open(tarball, "wb") as out:
+with urllib.request.urlopen(url, timeout=120) as response, open(tarball, "wb") as out:
     shutil.copyfileobj(response, out)
 
 digest = hashlib.md5(tarball.read_bytes()).hexdigest()
@@ -26,6 +26,5 @@ if digest != md5:
     sys.exit(f"{url}: md5 {digest}, expected {md5}")
 
 with tarfile.open(tarball) as tar:
-    # filter= exists only in newer Pythons; use it where the container has it
-    tar.extractall(lineages, **({"filter": "data"} if hasattr(tarfile, "data_filter") else {}))
+    tar.extractall(lineages, filter="data")
 tarball.unlink()
