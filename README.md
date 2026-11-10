@@ -35,6 +35,7 @@ Use `--exclude-atypical-warning contaminated` rather than dropping all atypical 
 - **antiSMASH uses the official `standalone-lite` image.** The biocontainer lacks the pre-built data and can't write it into its read-only install.
 - **Per-job SLURM logs are in `.snakemake/slurm_logs/`**, not `logs/{rule}/` as before Snakemake 9.
 - **Fungi only.** The BUSCO lineage is hard-coded to `fungi_odb12`.
+- **geneML 1.1.0 and the fungi_odb12 2026-05-22 release are pinned on purpose.** They produced the published Rhizopus BUSCO results, so changing either changes the gene predictions and BUSCO scores.
 - **Only the first `Taxon` entry is used.** Any further entries are ignored without a warning.
 - **Taxon downloads are GenBank (`GCA_`) only.** Otherwise each RefSeq (`GCF_`) twin would be analysed a second time. Listed accessions are downloaded as given, `GCF_` included.
 - **Versionless accessions.** When `datasets` is given several accessions in a file, a versionless one also returns report lines for its previous versions, which have no genome files. `--assembly-version latest` prevents this.

@@ -10,15 +10,8 @@ rule busco_database:
         runtime=60
     params:
         date=BUSCO_LINEAGE_DATE,
+        md5=BUSCO_LINEAGE_MD5,
     shell:
         """
-        # Download the database to a centralized location
-        busco --download fungi_odb12 --download_path data/databases/busco_downloads
-
-        # busco --download always fetches the newest release; refuse a different one
-        grep -qx "creation_date={params.date}" {output.db_dir}/dataset.cfg || {{
-            echo "fungi_odb12 is not the {params.date} release:" >&2
-            grep creation_date {output.db_dir}/dataset.cfg >&2
-            exit 1
-        }}
+        python workflow/scripts/get_busco_lineage.py fungi_odb12 {params.date} {params.md5} data/databases/busco_downloads
         """

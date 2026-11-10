@@ -33,10 +33,9 @@ PYTHON_CONTAINER = "docker://python:3.12-slim"
 
 # geneML is only on PyPI (no container), so rule get_geneml installs it once
 # into resources/ inside the python image, and geneml runs from there.
-# 1.1.0 (with --cpu-only) produced the published Rhizopus BUSCO results.
 GENEML_VERSION = "1.1.0"
-# fungi_odb12 release used for the published Rhizopus BUSCO results
 BUSCO_LINEAGE_DATE = "2026-05-22"
+BUSCO_LINEAGE_MD5 = "79aba415d64ed9a7b1994452b99106cc"
 GENEML_ENV = f"resources/geneml-{GENEML_VERSION}"
 
 # -----------------------------------------------------------------------------
