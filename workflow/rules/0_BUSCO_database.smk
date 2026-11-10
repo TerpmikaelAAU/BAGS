@@ -8,8 +8,17 @@ rule busco_database:
     resources:
         mem_mb=4000,
         runtime=60
+    params:
+        date=BUSCO_LINEAGE_DATE,
     shell:
         """
         # Download the database to a centralized location
         busco --download fungi_odb12 --download_path data/databases/busco_downloads
+
+        # busco --download always fetches the newest release; refuse a different one
+        grep -qx "creation_date={params.date}" {output.db_dir}/dataset.cfg || {{
+            echo "fungi_odb12 is not the {params.date} release:" >&2
+            grep creation_date {output.db_dir}/dataset.cfg >&2
+            exit 1
+        }}
         """
