@@ -14,7 +14,7 @@ conda env create -n BAGS -f environment.yml
 An existing `BAGS` env from before the Snakemake 9 move must be removed (`conda env remove -n BAGS`) and created again.
 
 ## Configure and run
-Choose the assemblies in `config/config.yaml` (see its comments), and the SLURM limits in `profile/config.yaml`. Then run `mkdir -p SNAKE_Joblogs` and submit `slurm_submit.sbatch`. Without that folder SLURM fails with no log. For gene prediction only (no antiSMASH, BUSCO or tree), submit `sbatch slurm_submit.sbatch geneml_only`. Or run directly:
+Choose the assemblies in `config/config.yaml` (see its comments), and the SLURM limits in `profile/config.yaml`. Then run `mkdir -p SNAKE_Joblogs` and submit `slurm_submit.sbatch`. Without that folder SLURM fails with no log. For gene prediction only (no antiSMASH, BUSCO or tree), submit `sbatch slurm_submit.sbatch geneml_only`. Or run everything directly:
 
 ```
 snakemake --profile profile
