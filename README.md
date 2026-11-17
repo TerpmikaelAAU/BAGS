@@ -45,4 +45,4 @@ Use `--exclude-atypical-warning contaminated` rather than dropping all atypical 
 - **Changing `Taxon` or the accessions re-runs everything.** `data/genomes` is downloaded again, so every genome gets a new timestamp and is re-analysed.
 
 ## Citation
-TerpmikaelAAU. *BAGS* v1.0.2. Zenodo. https://doi.org/10.5281/zenodo.24309696
+Terp, M. *BAGS* v1.0.2. Zenodo. https://doi.org/10.5281/zenodo.24309696
