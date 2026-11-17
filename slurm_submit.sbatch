@@ -18,7 +18,7 @@ conda activate BAGS
 # Render a DAG to visualize the workflow (optional)
 #snakemake --dag | dot -Tsvg > results/dag.svg
 
-# Main workflow
-snakemake --profile profile
+# Main workflow. Extra arguments are passed on, e.g. sbatch slurm_submit.sbatch geneml_only
+snakemake --profile profile "$@"
 # If the run crashed and the directory is locked, run once with --unlock
 #snakemake --profile profile --unlock

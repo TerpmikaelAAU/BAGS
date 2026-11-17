@@ -61,6 +61,16 @@ rule all:
         "data/final_BAGS_report.tsv",
         "data/phylogeny/taxon_tree.nwk"  # Require the tree
 
+# Gene prediction only (no antiSMASH, BUSCO or tree): snakemake --profile profile geneml_only
+def geneml_outputs(wildcards):
+    genome_dir = checkpoints.download_genomes.get(**wildcards).output.genome_dir
+    genomes, = glob_wildcards(os.path.join(genome_dir, "{genome}.fna"))
+    return expand("data/GeneML_prediction/{genome}.gff", genome=genomes)
+
+rule geneml_only:
+    input:
+        geneml_outputs
+
 # -----------------------------------------------------------------------------
 # INCLUDES
 # -----------------------------------------------------------------------------
