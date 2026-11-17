@@ -1,5 +1,7 @@
 # Busco Antismash GeneML Snakemake (BAGS)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24309696.svg)](https://doi.org/10.5281/zenodo.24309696)
+
 Predicts genes (GeneML), biosynthetic gene clusters (antiSMASH) and fungal BUSCO completeness for NCBI assemblies chosen by taxon and/or accession. It also builds a mashtree tree (`data/phylogeny/taxon_tree.nwk`) and consolidates the results per assembly. Terms are defined in [CONTEXT.md](CONTEXT.md).
 
 The *Rhizopus microsporus* CBS 337.62 genome figures are in [Rhizopus_T2T_paper](https://github.com/TerpmikaelAAU/Rhizopus_T2T_paper).
@@ -41,3 +43,6 @@ Use `--exclude-atypical-warning contaminated` rather than dropping all atypical 
 - **Versionless accessions.** When `datasets` is given several accessions in a file, a versionless one also returns report lines for its previous versions, which have no genome files. `--assembly-version latest` prevents this.
 - **A listed accession that NCBI does not return stops the run**, e.g. a typo or a suppressed assembly.
 - **Changing `Taxon` or the accessions re-runs everything.** `data/genomes` is downloaded again, so every genome gets a new timestamp and is re-analysed.
+
+## Citation
+TerpmikaelAAU. *BAGS* v1.0.2. Zenodo. https://doi.org/10.5281/zenodo.24309696
