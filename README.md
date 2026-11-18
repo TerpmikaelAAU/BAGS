@@ -44,3 +44,5 @@ Use `--exclude-atypical-warning contaminated` rather than dropping all atypical 
   url       = {https://doi.org/10.5281/zenodo.24309696}
 }
 ```
+
+BibTeX for every tool, database and method BAGS uses is in [citations.bib](citations.bib).
