@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24309696.svg)](https://doi.org/10.5281/zenodo.24309696)
 
-Predicts genes (GeneML), biosynthetic gene clusters (antiSMASH) and fungal BUSCO completeness for NCBI assemblies chosen by taxon and/or accession. It also builds a mashtree tree (`data/phylogeny/taxon_tree.nwk`) and consolidates the results per assembly. Terms are defined in [CONTEXT.md](CONTEXT.md).
+Predicts genes (GeneML), biosynthetic gene clusters (antiSMASH) and fungal BUSCO completeness for NCBI assemblies chosen by taxon and/or accession. It also builds a mashtree tree (`data/phylogeny/taxon_tree.nwk`) and consolidates the results per assembly.
 
 The *Rhizopus microsporus* CBS 337.62 genome figures are in [Rhizopus_T2T_paper](https://github.com/TerpmikaelAAU/Rhizopus_T2T_paper).
 
