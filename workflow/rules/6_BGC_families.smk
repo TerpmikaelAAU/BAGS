@@ -32,15 +32,23 @@ rule bigscape:
             done
         done
 
+        # BiG-SCAPE refuses an empty input folder; bgc_tree then gives every
+        # assembly an empty family set.
+        if [ -z "$(ls -A {output.out_dir}/input)" ]; then
+            echo "No antiSMASH regions in any assembly; skipping BiG-SCAPE" > {log}
+            exit 0
+        fi
+
         # -c: the default is every core on the node, not the allocation.
         # --exclude-gbk: the default "final" would drop an assembly named *final*.
         # No -m: MIBiG reference records would show up as families.
+        # --no-trees: per-family alignment trees are not used and are slow.
         bigscape cluster \
             -i {output.out_dir}/input --input-mode flat \
             --include-gbk region --exclude-gbk __bags_exclude_nothing__ \
             -o {output.out_dir}/output -l bags \
             -p {params.pfam} -c {threads} \
-            --gcf-cutoffs {params.cutoff} --include-singletons \
+            --gcf-cutoffs {params.cutoff} --include-singletons --no-trees \
             > {log} 2>&1
         """
 
@@ -59,11 +67,12 @@ rule bgc_tree:
     threads: 1
     resources:
         mem_mb=4 * GB,
-        runtime=30,
+        # UPGMA in pure Python is O(n^3): minutes for hundreds of assemblies
+        runtime=240,
     shell:
         """
         python workflow/scripts/bgc_tree.py \
-            --bigscape-dir {input.bigscape}/output --cutoff {params.cutoff} \
+            --bigscape-dir {input.bigscape} --cutoff {params.cutoff} \
             --matrix {output.matrix} --tree {output.tree} \
             {input.genomes}
         """

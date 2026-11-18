@@ -1,11 +1,12 @@
 """Build an assembly x gene cluster family (GCF) table from BiG-SCAPE output and
 a UPGMA dendrogram of the assemblies on Jaccard distance between their GCF sets.
 
-usage: bgc_tree.py --bigscape-dir DIR --cutoff 0.3 --matrix OUT.tsv --tree OUT.nwk GENOME.fna...
+usage: bgc_tree.py --bigscape-dir data/bigscape --cutoff 0.3 --matrix OUT.tsv --tree OUT.nwk GENOME.fna...
 
-BiG-SCAPE input files are named <assembly>__<region file>.gbk (rule bigscape),
-so the GBK column of its clustering tables maps each record to an assembly.
-Assemblies with no BGC regions are kept as all-zero rows.
+BiG-SCAPE input files are named <assembly>__<region file>.gbk in
+<bigscape-dir>/input (rule bigscape), so the GBK column of its clustering tables
+maps each record to an assembly. Assemblies with no BGC regions are kept as
+all-zero rows.
 """
 import argparse
 import csv
@@ -18,14 +19,19 @@ from collections import defaultdict
 
 def read_families(bigscape_dir, cutoff, genomes):
     """Return {assembly: {family: number of regions}} from every bin's clustering table."""
-    pattern = os.path.join(bigscape_dir, "output_files", f"*_c{cutoff}", "*", f"*_clustering_c{cutoff}.tsv")
+    counts = {g: defaultdict(int) for g in genomes}
+    input_dir = os.path.join(bigscape_dir, "input")
+    if not os.listdir(input_dir):
+        return counts  # no assembly has a BGC region; BiG-SCAPE was skipped
+
+    # BiG-SCAPE names folders with the float cutoff (c0.3, c1.0)
+    pattern = os.path.join(bigscape_dir, "output", "output_files", f"*_c{cutoff}", "*", f"*_clustering_c{cutoff}.tsv")
     tables = sorted(glob.glob(pattern))
     if not tables:
         sys.exit(f"No BiG-SCAPE clustering tables match {pattern}")
 
     # Longest match first, in case one assembly name is a prefix of another
     by_length = sorted(genomes, key=len, reverse=True)
-    counts = {g: defaultdict(int) for g in genomes}
     seen = set()
     for table in tables:
         with open(table) as f:
@@ -86,7 +92,7 @@ def main():
     args = parser.parse_args()
 
     genomes = sorted(os.path.basename(g).removesuffix(".fna") for g in args.genomes)
-    counts = read_families(args.bigscape_dir, args.cutoff, genomes)
+    counts = read_families(args.bigscape_dir, float(args.cutoff), genomes)
     families = sorted({fam for c in counts.values() for fam in c})
 
     with open(args.matrix, "w") as f:
