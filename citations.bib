@@ -1,0 +1,197 @@
+% BibTeX for BAGS and every tool, database and method it uses.
+% Versions are the ones pinned in the Snakefile; check them before citing.
+% Entries were taken from each DOI via doi.org (UTF-8; use biber/biblatex or
+% replace accented characters for classic BibTeX).
+
+% ---------------------------------------------------------------------------
+% Pipeline
+% ---------------------------------------------------------------------------
+
+% BAGS v1.0.2
+@software{terp_bags_2026,
+  author    = {Terp, Mikael},
+  title     = {{BAGS: Busco Antismash GeneML Snakemake}},
+  year      = {2026},
+  version   = {v1.0.2},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.24309696}
+}
+
+% Snakemake 9.26.1
+@article{molder_snakemake_2021,
+  author  = {Mölder, Felix and Jablonski, Kim Philipp and Letcher, Brice and Hall, Michael B. and Tomkins-Tinch, Christopher H. and Sochat, Vanessa and Forster, Jan and Lee, Soohyun and Twardziok, Sven O. and Kanitz, Alexander and Wilm, Andreas and Holtgrewe, Manuel and Rahmann, Sven and Nahnsen, Sven and Köster, Johannes},
+  title   = {Sustainable data analysis with {Snakemake}},
+  journal = {F1000Research},
+  volume  = {10},
+  pages   = {33},
+  year    = {2021},
+  doi     = {10.12688/f1000research.29032.2}
+}
+
+% Apptainer (formerly Singularity): every tool runs in a container
+@article{kurtzer_singularity_2017,
+  author  = {Kurtzer, Gregory M. and Sochat, Vanessa and Bauer, Michael W.},
+  title   = {Singularity: Scientific containers for mobility of compute},
+  journal = {PLOS ONE},
+  volume  = {12},
+  number  = {5},
+  pages   = {e0177459},
+  year    = {2017},
+  doi     = {10.1371/journal.pone.0177459}
+}
+
+% ---------------------------------------------------------------------------
+% Genome download
+% ---------------------------------------------------------------------------
+
+% NCBI Datasets CLI 18.37.0
+@article{oleary_ncbi_datasets_2024,
+  author  = {O'Leary, Nuala A. and Cox, Eric and Holmes, J. Bradley and Anderson, W. Ray and Falk, Robert and Hem, Vichet and Tsuchiya, Mirian T. N. and Schuler, Gregory D. and Zhang, Xuan and Torcivia, John and Ketter, Anne and Breen, Laurie and Cothran, Jonathan and Bajwa, Hena and Tinne, Jovany and Meric, Peter A. and Hlavina, Wratko and Schneider, Valerie A.},
+  title   = {Exploring and retrieving sequence and metadata for species across the tree of life with {NCBI} {Datasets}},
+  journal = {Scientific Data},
+  volume  = {11},
+  number  = {1},
+  year    = {2024},
+  doi     = {10.1038/s41597-024-03571-y}
+}
+
+% ---------------------------------------------------------------------------
+% Gene prediction
+% ---------------------------------------------------------------------------
+
+% geneML 1.1.0 (preprint)
+@misc{vader_geneml_2026,
+  author    = {Vader, Lisa and Harvey, Colin J. B. and Weber, Tilmann and Hon, Lawrence S.},
+  title     = {{geneML}: Gene annotation across diverse fungal species using deep learning},
+  publisher = {openRxiv},
+  note      = {Preprint},
+  year      = {2026},
+  doi       = {10.64898/2026.05.18.725946}
+}
+
+% ---------------------------------------------------------------------------
+% Biosynthetic gene clusters
+% ---------------------------------------------------------------------------
+
+% antiSMASH 8.0.4
+@article{blin_antismash_2025,
+  author  = {Blin, Kai and Shaw, Simon and Vader, Lisa and Szenei, Judit and Reitz, Zachary L. and Augustijn, Hannah E. and Cediel-Becerra, José D. D. and de Crécy-Lagard, Valérie and Koetsier, Robert A. and Williams, Sam E. and Cruz-Morales, Pablo and Wongwas, Sopida and Segurado Luchsinger, Alejandro E. and Biermann, Friederike and Korenskaia, Aleksandra and Zdouc, Mitja M. and Meijer, David and Terlouw, Barbara R. and van der Hooft, Justin J. J. and Ziemert, Nadine and Helfrich, Eric J. N. and Masschelein, Joleen and Corre, Christophe and Chevrette, Marc G. and van Wezel, Gilles P. and Medema, Marnix H. and Weber, Tilmann},
+  title   = {{antiSMASH} 8.0: extended gene cluster detection capabilities and analyses of chemistry, enzymology, and regulation},
+  journal = {Nucleic Acids Research},
+  volume  = {53},
+  number  = {W1},
+  pages   = {W32--W38},
+  year    = {2025},
+  doi     = {10.1093/nar/gkaf334}
+}
+
+% BiG-SCAPE 2.0.3 (gene cluster families); its authors ask for both papers
+@article{draisma_bigscape2_2026,
+  author  = {Draisma, Arjan and Loureiro, Catarina and Louwen, Nico L. L. and Kautsar, Satria A. and Navarro-Muñoz, Jorge C. and Doering, Drew T. and Mouncey, Nigel J. and Medema, Marnix H.},
+  title   = {{BiG-SCAPE} 2.0 and {BiG-SLiCE} 2.0: scalable, accurate and interactive sequence clustering of metabolic gene clusters},
+  journal = {Nature Communications},
+  volume  = {17},
+  number  = {1},
+  year    = {2026},
+  doi     = {10.1038/s41467-026-68733-5}
+}
+
+@article{navarro_munoz_bigscape_2020,
+  author  = {Navarro-Muñoz, Jorge C. and Selem-Mojica, Nelly and Mullowney, Michael W. and Kautsar, Satria A. and Tryon, James H. and Parkinson, Elizabeth I. and De Los Santos, Emmanuel L. C. and Yeong, Marley and Cruz-Morales, Pablo and Abubucker, Sahar and Roeters, Arne and Lokhorst, Wouter and Fernandez-Guerra, Antonio and Cappelini, Luciana Teresa Dias and Goering, Anthony W. and Thomson, Regan J. and Metcalf, William W. and Kelleher, Neil L. and Barona-Gomez, Francisco and Medema, Marnix H.},
+  title   = {A computational framework to explore large-scale biosynthetic diversity},
+  journal = {Nature Chemical Biology},
+  volume  = {16},
+  number  = {1},
+  pages   = {60--68},
+  year    = {2020},
+  doi     = {10.1038/s41589-019-0400-9}
+}
+
+% Pfam 35.0 (downloaded by antiSMASH, also used by BiG-SCAPE)
+@article{mistry_pfam_2021,
+  author  = {Mistry, Jaina and Chuguransky, Sara and Williams, Lowri and Qureshi, Matloob and Salazar, Gustavo A. and Sonnhammer, Erik L. L. and Tosatto, Silvio C. E. and Paladin, Lisanna and Raj, Shriya and Richardson, Lorna J. and Finn, Robert D. and Bateman, Alex},
+  title   = {Pfam: The protein families database in 2021},
+  journal = {Nucleic Acids Research},
+  volume  = {49},
+  number  = {D1},
+  pages   = {D412--D419},
+  year    = {2021},
+  doi     = {10.1093/nar/gkaa913}
+}
+
+% HMMER 3 (profile searches inside antiSMASH and BUSCO)
+@article{eddy_hmmer_2011,
+  author  = {Eddy, Sean R.},
+  title   = {Accelerated Profile {HMM} Searches},
+  journal = {PLoS Computational Biology},
+  volume  = {7},
+  number  = {10},
+  pages   = {e1002195},
+  year    = {2011},
+  doi     = {10.1371/journal.pcbi.1002195}
+}
+
+% ---------------------------------------------------------------------------
+% Completeness
+% ---------------------------------------------------------------------------
+
+% BUSCO 6.1.0 with fungi_odb12 (2026-05-22 release); the citation BUSCO v6 asks for
+@article{tegenfeldt_busco_2025,
+  author  = {Tegenfeldt, Fredrik and Kuznetsov, Dmitry and Manni, Mosè and Berkeley, Matthew and Zdobnov, Evgeny M. and Kriventseva, Evgenia V.},
+  title   = {{OrthoDB} and {BUSCO} update: annotation of orthologs with wider sampling of genomes},
+  journal = {Nucleic Acids Research},
+  volume  = {53},
+  number  = {D1},
+  pages   = {D516--D522},
+  year    = {2025},
+  doi     = {10.1093/nar/gkae987}
+}
+
+% ---------------------------------------------------------------------------
+% Trees
+% ---------------------------------------------------------------------------
+
+% mashtree 1.4.6 (genome tree)
+@article{katz_mashtree_2019,
+  author  = {Katz, Lee and Griswold, Taylor and Morrison, Shatavia and Caravas, Jason and Zhang, Shaokang and Bakker, Henk and Deng, Xiangyu and Carleton, Heather},
+  title   = {Mashtree: a rapid comparison of whole genome sequence files},
+  journal = {Journal of Open Source Software},
+  volume  = {4},
+  number  = {44},
+  pages   = {1762},
+  year    = {2019},
+  doi     = {10.21105/joss.01762}
+}
+
+% Mash (distances behind mashtree)
+@article{ondov_mash_2016,
+  author  = {Ondov, Brian D. and Treangen, Todd J. and Melsted, Páll and Mallonee, Adam B. and Bergman, Nicholas H. and Koren, Sergey and Phillippy, Adam M.},
+  title   = {Mash: fast genome and metagenome distance estimation using {MinHash}},
+  journal = {Genome Biology},
+  volume  = {17},
+  number  = {1},
+  year    = {2016},
+  doi     = {10.1186/s13059-016-0997-x}
+}
+
+% Jaccard distance between assemblies' gene cluster family sets (BGC tree)
+@article{jaccard_flora_1912,
+  author  = {Jaccard, Paul},
+  title   = {The distribution of the flora in the alpine zone},
+  journal = {New Phytologist},
+  volume  = {11},
+  number  = {2},
+  pages   = {37--50},
+  year    = {1912},
+  doi     = {10.1111/j.1469-8137.1912.tb05611.x}
+}
+
+% UPGMA clustering of the BGC tree (no DOI)
+@article{sokal_upgma_1958,
+  author  = {Sokal, Robert R. and Michener, Charles D.},
+  title   = {A statistical method for evaluating systematic relationships},
+  journal = {University of Kansas Science Bulletin},
+  volume  = {38},
+  pages   = {1409--1438},
+  year    = {1958}
+}
