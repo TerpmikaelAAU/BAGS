@@ -45,4 +45,14 @@ Use `--exclude-atypical-warning contaminated` rather than dropping all atypical 
 - **Changing `Taxon` or the accessions re-runs everything.** `data/genomes` is downloaded again, so every genome gets a new timestamp and is re-analysed.
 
 ## Citation
-Terp, M. *BAGS* v1.0.2. Zenodo. https://doi.org/10.5281/zenodo.24309696
+```bibtex
+@software{terp_bags_2026,
+  author    = {Terp, Mikael},
+  title     = {{BAGS: Busco Antismash GeneML Snakemake}},
+  year      = {2026},
+  version   = {v1.0.2},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.24309696},
+  url       = {https://doi.org/10.5281/zenodo.24309696}
+}
+```
