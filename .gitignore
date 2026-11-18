@@ -85,6 +85,7 @@ temp/
 # =========================
 SNAKE_Joblogs/
 data/
+results/
 Logs/
 busco_downloads/
 resources/

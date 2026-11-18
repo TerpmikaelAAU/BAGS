@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from snakemake.utils import min_version
 
 min_version("9.0")
@@ -15,6 +16,7 @@ resources = {
     "NCBI_datasets": {"mem_mb": 4 * GB, "runtime": 240},
     "busco": {"mem_mb": 8 * GB, "runtime": 60},
     "get_geneml": {"mem_mb": 8 * GB, "runtime": 120},
+    "bigscape": {"mem_mb": 32 * GB, "runtime": 1440},
 }
 
 # -----------------------------------------------------------------------------
@@ -28,6 +30,7 @@ NCBI_DATASETS_CONTAINER = "docker://staphb/ncbi-datasets:18.37.0"
 # is read-only in a container; the official image ships it pre-built.
 ANTISMASH_CONTAINER = "docker://antismash/standalone-lite:8.0.4"
 BUSCO_CONTAINER = "docker://quay.io/biocontainers/busco:6.1.0--pyhdfd78af_2"
+BIGSCAPE_CONTAINER = "docker://quay.io/biocontainers/bigscape:2.0.3--pyhdfd78af_0"
 MASHTREE_CONTAINER = "docker://quay.io/biocontainers/mashtree:1.4.6--pl5321h87e0c26_4"
 PYTHON_CONTAINER = "docker://python:3.12-slim"
 
@@ -37,6 +40,16 @@ GENEML_VERSION = "1.1.0"
 BUSCO_LINEAGE_DATE = "2026-05-22"
 BUSCO_LINEAGE_MD5 = "79aba415d64ed9a7b1994452b99106cc"
 GENEML_ENV = f"resources/geneml-{GENEML_VERSION}"
+# BiG-SCAPE reuses the Pfam that antiSMASH 8.0.4 downloads (download_databases.py:
+# PFAM_LATEST_VERSION). Change it together with ANTISMASH_CONTAINER.
+ANTISMASH_PFAM = "data/databases/antismashdatabase/pfam/35.0/Pfam-A.hmm"
+# BiG-SCAPE distance cutoff for gene cluster families (its default)
+GCF_CUTOFF = 0.3
+
+# Each run copies its final outputs to results/<run start>/. Only the local
+# publish_results rule uses RUN_ID, so cluster jobs that re-read this file with
+# a different time are unaffected. Override with --config run_id=NAME.
+RUN_ID = config.get("run_id") or datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # -----------------------------------------------------------------------------
 # DYNAMIC EVALUATION FUNCTIONS
@@ -52,6 +65,11 @@ def get_all_genomes(wildcards):
     genomes, = glob_wildcards(os.path.join(genome_dir, "{genome}.fna"))
     return expand("data/genomes/{genome}.fna", genome=genomes)
 
+def get_antismash_dirs(wildcards):
+    genome_dir = checkpoints.download_genomes.get(**wildcards).output.genome_dir
+    genomes, = glob_wildcards(os.path.join(genome_dir, "{genome}.fna"))
+    return expand("data/Antismash/{genome}", genome=genomes)
+
 # -----------------------------------------------------------------------------
 # TARGET RULE
 # -----------------------------------------------------------------------------
@@ -59,7 +77,8 @@ rule all:
     input:
         "data/databases/antismashdatabase",
         "data/final_BAGS_report.tsv",
-        "data/phylogeny/taxon_tree.nwk"  # Require the tree
+        "data/phylogeny/taxon_tree.nwk",  # Require the tree
+        f"results/{RUN_ID}",
 
 # Gene prediction only (no antiSMASH, BUSCO or tree): snakemake --profile profile geneml_only
 def geneml_outputs(wildcards):
@@ -82,6 +101,8 @@ include: "workflow/rules/2_Antismash.smk"
 include: "workflow/rules/3_BUSCO.smk"
 include: "workflow/rules/4_Results_summary.smk"
 include: "workflow/rules/5_Phylogeny.smk" # Include the new rule
+include: "workflow/rules/6_BGC_families.smk"
+include: "workflow/rules/7_Publish_results.smk"
 
 
 
