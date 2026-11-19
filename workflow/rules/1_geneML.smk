@@ -36,8 +36,8 @@ rule geneml:
     container:
         PYTHON_CONTAINER
     # geneML >= 1.4 runs min(-c, contigs) processes of ~2.5 GB each, splitting
-    # the -c cores between them; its memory check sees the whole node, not the
-    # SLURM limit, so mem_mb must cover threads * 2.5 GB.
+    # the -c cores between them. With -c it never lowers the process count to
+    # fit memory, so mem_mb must cover threads * 2.5 GB.
     threads: 16
     resources:
         mem_mb=resources["GeneML"]["mem_mb"],
