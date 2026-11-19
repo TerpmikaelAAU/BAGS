@@ -11,7 +11,7 @@ GB = 1024
 # runtime is in minutes
 resources = {
     "antismash_database": {"mem_mb": 4 * GB, "runtime": 240},
-    "GeneML": {"mem_mb": 30 * GB, "runtime": 180},
+    "GeneML": {"mem_mb": 48 * GB, "runtime": 180},
     "antismash": {"mem_mb": 64 * GB, "runtime": 180},
     "NCBI_datasets": {"mem_mb": 4 * GB, "runtime": 240},
     "busco": {"mem_mb": 8 * GB, "runtime": 60},

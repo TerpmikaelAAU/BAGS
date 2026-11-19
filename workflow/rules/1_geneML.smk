@@ -35,12 +35,14 @@ rule geneml:
         proteins="data/GeneML_prediction/{genome}.faa",
     container:
         PYTHON_CONTAINER
-    threads: 30
+    # geneML >= 1.4 runs min(-c, contigs) processes of ~2.5 GB each, splitting
+    # the -c cores between them; its memory check sees the whole node, not the
+    # SLURM limit, so mem_mb must cover threads * 2.5 GB.
+    threads: 16
     resources:
         mem_mb=resources["GeneML"]["mem_mb"],
         runtime=resources["GeneML"]["runtime"],
-        #gpus=1, GPU server is probally down
     shell:
         """
-        {input.geneml} {input.fasta} --output {output.gff} -p {output.proteins} -c 1
+        {input.geneml} {input.fasta} --output {output.gff} -p {output.proteins} -c {threads}
         """
