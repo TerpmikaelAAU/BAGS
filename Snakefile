@@ -24,7 +24,7 @@ resources = {
 # Every tool rule runs in a pinned image (profile: software-deployment-method:
 # apptainer). The summary rules only use the shell, so they run on the host.
 # -----------------------------------------------------------------------------
-NCBI_DATASETS_CONTAINER = "docker://staphb/ncbi-datasets:18.37.0"
+NCBI_DATASETS_CONTAINER = "docker://staphb/ncbi-datasets:18.39.0"
 # antiSMASH: the official image, not the biocontainer. antiSMASH writes
 # pre-built data (e.g. bgc_seeds.hmm) into its own package directory, which
 # is read-only in a container; the official image ships it pre-built.
@@ -36,7 +36,7 @@ PYTHON_CONTAINER = "docker://python:3.12-slim"
 
 # geneML is only on PyPI (no container), so rule get_geneml installs it once
 # into resources/ inside the python image, and geneml runs from there.
-GENEML_VERSION = "1.1.0"
+GENEML_VERSION = "1.5.0"
 BUSCO_LINEAGE_DATE = "2026-05-22"
 BUSCO_LINEAGE_MD5 = "79aba415d64ed9a7b1994452b99106cc"
 GENEML_ENV = f"resources/geneml-{GENEML_VERSION}"

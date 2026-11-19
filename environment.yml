@@ -4,7 +4,7 @@ channels:
   - bioconda
 dependencies:
  - python=3.12
- - snakemake=9.26.1
+ - snakemake=9.27.2
  - snakemake-executor-plugin-slurm=2.8.0
  - snakefmt # snakemake code formatter
- - graphviz=9.0.0 # to visualize the DAG
+ - graphviz=14.1.2 # to visualize the DAG
