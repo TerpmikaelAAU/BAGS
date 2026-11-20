@@ -17,7 +17,7 @@ resources = {
     "busco": {"mem_mb": 8 * GB, "runtime": 60},
     "get_geneml": {"mem_mb": 8 * GB, "runtime": 120},
     "bigscape": {"mem_mb": 32 * GB, "runtime": 1440},
-    "ufcg_profile": {"mem_mb": 16 * GB, "runtime": 240},
+    "ufcg_profile": {"mem_mb": 16 * GB, "runtime": 120},
     "ufcg_tree": {"mem_mb": 64 * GB, "runtime": 2880},
 }
 
