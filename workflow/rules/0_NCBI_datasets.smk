@@ -26,6 +26,7 @@ checkpoint download_genomes:
     params:
         taxon=requested_taxon(),
         accessions=" ".join(requested_accessions()),
+        reference_only=REFERENCE_ONLY,
     container:
         NCBI_DATASETS_CONTAINER
     resources:
@@ -36,7 +37,19 @@ checkpoint download_genomes:
         rm -rf data/tmp
         mkdir -p data/tmp/extracted
 
-        if [ -n "{params.taxon}" ]; then
+        if [ -n "{params.taxon}" ] && [ "{params.reference_only}" = True ]; then
+            # NCBI's reference genomes (at most one per species). Some are flagged only on
+            # the RefSeq (GCF_) copy, so take each one's GenBank (GCA_) twin.
+            datasets summary genome taxon "{params.taxon}" --reference --assembly-source all --as-json-lines \
+                | awk '{{ if (match($0, /"accession": *"GCA_[0-9]+\.[0-9]+"/) || match($0, /"pairedAccession": *"GCA_[0-9]+\.[0-9]+"/)) {{ s = substr($0, RSTART, RLENGTH); sub(/.*"GCA_/, "GCA_", s); sub(/"$/, "", s); print s }} }}' \
+                | sort -u > data/tmp/reference.txt
+            if [ ! -s data/tmp/reference.txt ]; then
+                echo "No NCBI reference genomes for taxon {params.taxon}" >&2
+                exit 1
+            fi
+            datasets download genome accession --inputfile data/tmp/reference.txt --filename data/tmp/taxon.zip
+            unzip -q data/tmp/taxon.zip -d data/tmp/extracted/taxon/
+        elif [ -n "{params.taxon}" ]; then
             # GenBank only: RefSeq (GCF_) copies of GenBank assemblies would be analysed twice
             datasets download genome taxon "{params.taxon}" --assembly-source GenBank --filename data/tmp/taxon.zip
             unzip -q data/tmp/taxon.zip -d data/tmp/extracted/taxon/

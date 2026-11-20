@@ -3,6 +3,10 @@
 # Every GenBank assembly of this NCBI taxon (name or taxid). Leave as [] to use accessions only.
 Taxon: [Ganoderma lucidum]
 
+# Only NCBI's reference genomes of the Taxon (at most one per species; many species
+# have none), as their GenBank (GCA_) copies. true or false.
+Reference_only: false
+
 # Specific NCBI assembly accessions (GCA_ or GCF_), downloaded as given.
 Accessions: []
 #  - GCA_000149305.1
