@@ -58,7 +58,10 @@ GCF_CUTOFF = 0.3
 RUN_ID = config.get("run_id") or datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Optional UFCG core-gene phylogeny (UFCG: true/false in config/config.yaml)
-RUN_UFCG = str(config.get("UFCG", False)).strip().lower() in ("true", "yes", "1")
+_ufcg = str(config.get("UFCG", False)).strip().lower()
+if _ufcg not in ("true", "false", "yes", "no", "on", "off", "1", "0"):
+    raise ValueError(f"config UFCG must be true or false, got {config['UFCG']!r}")
+RUN_UFCG = _ufcg in ("true", "yes", "on", "1")
 
 # -----------------------------------------------------------------------------
 # DYNAMIC EVALUATION FUNCTIONS

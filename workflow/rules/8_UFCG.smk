@@ -20,7 +20,7 @@ rule ufcg_profile:
         runtime=resources["ufcg_profile"]["runtime"],
     shell:
         """
-        # Own temp dir per assembly; UFCG's default is a shared /tmp
+        # -w drops UFCG's random temp-file prefix, so each assembly needs its own dir
         rm -rf {params.tmp_dir}
         mkdir -p {params.out_dir} {params.tmp_dir}
         ufcg profile -i {input.fasta} -o {params.out_dir} -w {params.tmp_dir} \
@@ -48,7 +48,7 @@ rule ufcg_tree:
         # Only this run's profiles, so leftovers from an earlier taxon stay out
         rm -rf data/UFCG/tree_input
         mkdir -p data/UFCG/tree_input {output.out_dir}
-        cp {input} data/UFCG/tree_input/
+        for f in {input}; do cp "$f" data/UFCG/tree_input/; done
 
         # IQ-TREE needs at least 4 sequences
         n=$(ls data/UFCG/tree_input | wc -l)
