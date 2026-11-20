@@ -57,11 +57,18 @@ GCF_CUTOFF = 0.3
 # a different time are unaffected. Override with --config run_id=NAME.
 RUN_ID = config.get("run_id") or datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
+def config_flag(key):
+    """A true/false config value; a typo fails instead of silently meaning false."""
+    value = str(config.get(key, False)).strip().lower()
+    if value not in ("true", "false", "yes", "no", "on", "off", "1", "0"):
+        raise ValueError(f"config {key} must be true or false, got {config[key]!r}")
+    return value in ("true", "yes", "on", "1")
+
+
 # Optional UFCG core-gene phylogeny (UFCG: true/false in config/config.yaml)
-_ufcg = str(config.get("UFCG", False)).strip().lower()
-if _ufcg not in ("true", "false", "yes", "no", "on", "off", "1", "0"):
-    raise ValueError(f"config UFCG must be true or false, got {config['UFCG']!r}")
-RUN_UFCG = _ufcg in ("true", "yes", "on", "1")
+RUN_UFCG = config_flag("UFCG")
+# Taxon download limited to NCBI reference genomes (Reference_only: true/false)
+REFERENCE_ONLY = config_flag("Reference_only")
 
 # -----------------------------------------------------------------------------
 # DYNAMIC EVALUATION FUNCTIONS
