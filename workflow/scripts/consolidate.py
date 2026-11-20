@@ -60,7 +60,8 @@ def read_ncbi_report(path):
         text = handle.read()
     try:
         data = json.loads(text)
-        reports = data["reports"] if isinstance(data, dict) else data
+        # A one-assembly jsonl is a single JSON object without "reports".
+        reports = data.get("reports", [data]) if isinstance(data, dict) else data
     except json.JSONDecodeError:
         reports = [json.loads(line) for line in text.splitlines() if line.strip()]
     return [snake_case(r) for r in reports]
