@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24309696.svg)](https://doi.org/10.5281/zenodo.24309696)
 
-Predicts genes (GeneML), biosynthetic gene clusters (antiSMASH) and fungal BUSCO completeness for NCBI assemblies chosen by taxon and/or accession. It also builds a mashtree tree, and a dendrogram of the assemblies by shared BGC families (BiG-SCAPE gene cluster families, UPGMA on Jaccard distance). Set `UFCG: true` in `config/config.yaml` to also build a [UFCG](https://github.com/steineggerlab/ufcg) core-gene tree (61 fungal marker genes found in the geneML proteins, IQ-TREE); with fewer than 4 assemblies it writes a star tree. Each run copies the final report, the trees and the assembly × BGC family table to `results/<run start time>/`.
+Predicts genes (GeneML), biosynthetic gene clusters (antiSMASH) and fungal BUSCO completeness for NCBI assemblies chosen by taxon and/or accession. It also builds a mashtree tree, and a dendrogram of the assemblies by shared BGC families (BiG-SCAPE gene cluster families, UPGMA on Jaccard distance). Set `UFCG: true` in `config/config.yaml` to also build a [UFCG](https://github.com/steineggerlab/ufcg) core-gene tree (61 fungal marker genes found in the geneML proteins, IQ-TREE); with fewer than 4 assemblies it writes a star tree. Each run copies the final report, the trees (leaves named like `Rhizopus microsporus ATCC 52814 (GCA_002083745.1)`, from NCBI's metadata) and the assembly × BGC family table to `results/<run start time>/`.
 
 The *Rhizopus microsporus* CBS 337.62 genome figures are in [Rhizopus_T2T_paper](https://github.com/TerpmikaelAAU/Rhizopus_T2T_paper).
 
