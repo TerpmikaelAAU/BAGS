@@ -25,15 +25,10 @@ rule ufcg_profile:
         # -w drops UFCG's random temp-file prefix, so each assembly needs its own dir
         rm -rf {params.tmp_dir}
         mkdir -p {params.out_dir} {params.tmp_dir}/work
-        # Keep only each gene's first geneML transcript (_mRNA1, its longest CDS):
-        # alternative isoforms would make a marker look duplicated, and ufcg tree
-        # drops duplicated markers. profile-pro (1.0.6) never reads the last
-        # record of its input, so end the copy with an empty one.
-        awk '/^>/{{keep = ($1 ~ /_mRNA1$/)}} keep' {input.proteins} > {params.faa}
-        if ! grep -q '^>' {params.faa}; then
-            echo "No _mRNA1 proteins in {input.proteins}" > {log}
-            exit 1
-        fi
+        # profile-pro (1.0.6) never reads the last record of its input, so end
+        # the copy with an empty one. geneML runs with --max-transcripts 1, so
+        # isoforms can't make a marker look duplicated (ufcg tree drops those).
+        cat {input.proteins} > {params.faa}
         echo ">end" >> {params.faa}
         ufcg profile-pro -i {params.faa} -o {params.out_dir} -w {params.tmp_dir}/work \
             -t {threads} --nocolor > {log} 2>&1
