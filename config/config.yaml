@@ -10,3 +10,6 @@ Accessions: []
 
 # Optional text file with one accession per line (# starts a comment), e.g. config/accessions.txt
 Accessions_file: ""
+
+# Also build a UFCG core-gene phylogeny (61 fungal marker genes, IQ-TREE). true or false.
+UFCG: false

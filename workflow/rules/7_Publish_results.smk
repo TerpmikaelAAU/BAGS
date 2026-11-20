@@ -9,6 +9,7 @@ rule publish_results:
         taxon_tree="data/phylogeny/taxon_tree.nwk",
         bgc_tree="data/phylogeny/bgc_tree.nwk",
         bgc_families="data/phylogeny/bgc_families.tsv",
+        ufcg_tree=["data/phylogeny/ufcg_tree.nwk"] if RUN_UFCG else [],
     output:
         directory(f"results/{RUN_ID}"),
     shell:
