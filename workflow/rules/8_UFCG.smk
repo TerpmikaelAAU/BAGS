@@ -1,15 +1,17 @@
-# UFCG (universal fungal core genes): profile extracts the 61 core marker
-# genes from each assembly, tree builds a maximum-likelihood phylogeny from
-# them (MAFFT + IQ-TREE). Runs only with UFCG: true in config/config.yaml.
+# UFCG (universal fungal core genes): profile-pro finds the 61 core marker
+# genes in each assembly's geneML proteins (MMseqs2, no AUGUSTUS), tree builds
+# a maximum-likelihood phylogeny from them (MAFFT + IQ-TREE). Runs only with
+# UFCG: true in config/config.yaml.
 rule ufcg_profile:
     input:
-        fasta="data/genomes/{genome}.fna",
+        proteins="data/GeneML_prediction/{genome}.faa",
     output:
         # UFCG names the profile after the input file minus its extension
         ucg="data/UFCG/profiles/{genome}/{genome}.ucg",
     params:
         out_dir="data/UFCG/profiles/{genome}",
         tmp_dir="data/UFCG/tmp/{genome}",
+        faa="data/UFCG/tmp/{genome}/{genome}.faa",
     container:
         UFCG_CONTAINER
     threads: 8
@@ -22,8 +24,13 @@ rule ufcg_profile:
         """
         # -w drops UFCG's random temp-file prefix, so each assembly needs its own dir
         rm -rf {params.tmp_dir}
-        mkdir -p {params.out_dir} {params.tmp_dir}
-        ufcg profile -i {input.fasta} -o {params.out_dir} -w {params.tmp_dir} \
+        mkdir -p {params.out_dir} {params.tmp_dir}/work
+        # profile-pro (1.0.6) never reads the last record of its input, so end
+        # the copy with an empty one. geneML runs with --max-transcripts 1, so
+        # isoforms can't make a marker look duplicated (ufcg tree drops those).
+        cat {input.proteins} > {params.faa}
+        echo ">end" >> {params.faa}
+        ufcg profile-pro -i {params.faa} -o {params.out_dir} -w {params.tmp_dir}/work \
             -t {threads} --nocolor > {log} 2>&1
         rm -rf {params.tmp_dir}
         """

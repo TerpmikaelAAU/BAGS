@@ -38,11 +38,13 @@ rule geneml:
     # geneML >= 1.4 runs min(-c, contigs) processes of ~2.5 GB each, splitting
     # the -c cores between them. With -c it never lowers the process count to
     # fit memory, so mem_mb must cover threads * 2.5 GB.
+    # --max-transcripts 1: one gene model per locus (as in FIGS), so
+    # alternative isoforms don't inflate gene counts or duplicate UFCG markers.
     threads: 16
     resources:
         mem_mb=resources["GeneML"]["mem_mb"],
         runtime=resources["GeneML"]["runtime"],
     shell:
         """
-        {input.geneml} {input.fasta} --output {output.gff} -p {output.proteins} -c {threads}
+        {input.geneml} {input.fasta} --output {output.gff} -p {output.proteins} --max-transcripts 1 -c {threads}
         """
