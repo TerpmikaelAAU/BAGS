@@ -17,6 +17,8 @@ resources = {
     "busco": {"mem_mb": 8 * GB, "runtime": 60},
     "get_geneml": {"mem_mb": 8 * GB, "runtime": 120},
     "bigscape": {"mem_mb": 32 * GB, "runtime": 1440},
+    "ufcg_profile": {"mem_mb": 16 * GB, "runtime": 240},
+    "ufcg_tree": {"mem_mb": 64 * GB, "runtime": 2880},
 }
 
 # -----------------------------------------------------------------------------
@@ -33,6 +35,10 @@ BUSCO_CONTAINER = "docker://quay.io/biocontainers/busco:6.1.0--pyhdfd78af_2"
 BIGSCAPE_CONTAINER = "docker://quay.io/biocontainers/bigscape:2.0.3--pyhdfd78af_0"
 MASHTREE_CONTAINER = "docker://quay.io/biocontainers/mashtree:1.4.6--pl5321h87e0c26_4"
 PYTHON_CONTAINER = "docker://python:3.12-slim"
+# UFCG: the official image, not the biocontainer. UFCG looks for its marker
+# database next to its jar and otherwise downloads it there, which fails in a
+# read-only container; the official image ships the database.
+UFCG_CONTAINER = "docker://endix1029/ufcg:v1.0.6"
 
 # geneML is only on PyPI (no container), so rule get_geneml installs it once
 # into resources/ inside the python image, and geneml runs from there.
@@ -50,6 +56,9 @@ GCF_CUTOFF = 0.3
 # publish_results rule uses RUN_ID, so cluster jobs that re-read this file with
 # a different time are unaffected. Override with --config run_id=NAME.
 RUN_ID = config.get("run_id") or datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+# Optional UFCG core-gene phylogeny (UFCG: true/false in config/config.yaml)
+RUN_UFCG = str(config.get("UFCG", False)).strip().lower() in ("true", "yes", "1")
 
 # -----------------------------------------------------------------------------
 # DYNAMIC EVALUATION FUNCTIONS
@@ -70,6 +79,11 @@ def get_antismash_dirs(wildcards):
     genomes, = glob_wildcards(os.path.join(genome_dir, "{genome}.fna"))
     return expand("data/Antismash/{genome}", genome=genomes)
 
+def get_ufcg_profiles(wildcards):
+    genome_dir = checkpoints.download_genomes.get(**wildcards).output.genome_dir
+    genomes, = glob_wildcards(os.path.join(genome_dir, "{genome}.fna"))
+    return expand("data/UFCG/profiles/{genome}/{genome}.ucg", genome=genomes)
+
 # -----------------------------------------------------------------------------
 # TARGET RULE
 # -----------------------------------------------------------------------------
@@ -79,6 +93,7 @@ rule all:
         "data/final_BAGS_report.tsv",
         "data/phylogeny/taxon_tree.nwk",  # Require the tree
         f"results/{RUN_ID}",
+        ["data/phylogeny/ufcg_tree.nwk"] if RUN_UFCG else [],
 
 # Gene prediction only (no antiSMASH, BUSCO or tree): snakemake --profile profile geneml_only
 def geneml_outputs(wildcards):
@@ -103,6 +118,7 @@ include: "workflow/rules/4_Results_summary.smk"
 include: "workflow/rules/5_Phylogeny.smk" # Include the new rule
 include: "workflow/rules/6_BGC_families.smk"
 include: "workflow/rules/7_Publish_results.smk"
+include: "workflow/rules/8_UFCG.smk"
 
 
 
