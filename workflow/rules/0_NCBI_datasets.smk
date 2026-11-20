@@ -18,6 +18,8 @@ def requested_accessions():
 
 if not requested_taxon() and not requested_accessions():
     raise ValueError("config: set Taxon, Accessions and/or Accessions_file")
+if REFERENCE_ONLY and not requested_taxon():
+    raise ValueError("config: Reference_only needs a Taxon")
 
 
 checkpoint download_genomes:
@@ -39,10 +41,11 @@ checkpoint download_genomes:
 
         if [ -n "{params.taxon}" ] && [ "{params.reference_only}" = True ]; then
             # NCBI's reference genomes (at most one per species). Some are flagged only on
-            # the RefSeq (GCF_) copy, so take each one's GenBank (GCA_) twin.
-            datasets summary genome taxon "{params.taxon}" --reference --assembly-source all --as-json-lines \
-                | awk '{{ if (match($0, /"accession": *"GCA_[0-9]+\.[0-9]+"/) || match($0, /"pairedAccession": *"GCA_[0-9]+\.[0-9]+"/)) {{ s = substr($0, RSTART, RLENGTH); sub(/.*"GCA_/, "GCA_", s); sub(/"$/, "", s); print s }} }}' \
-                | sort -u > data/tmp/reference.txt
+            # the RefSeq (GCF_) copy, so take each one's GenBank (GCA_) twin. A twin can be an
+            # older version of a GCA_ that is itself listed, so keep the newest per assembly.
+            datasets summary genome taxon "{params.taxon}" --reference --assembly-source all --as-json-lines \\
+                | awk '{{ if (match($0, /"accession": *"GCA_[0-9]+\\.[0-9]+"/) || match($0, /"pairedAccession": *"GCA_[0-9]+\\.[0-9]+"/)) {{ s = substr($0, RSTART, RLENGTH); sub(/.*"GCA_/, "GCA_", s); sub(/"$/, "", s); print s }} }}' \\
+                | sort -t. -k1,1 -k2,2nr | awk -F. '!seen[$1]++' > data/tmp/reference.txt
             if [ ! -s data/tmp/reference.txt ]; then
                 echo "No NCBI reference genomes for taxon {params.taxon}" >&2
                 exit 1
@@ -73,8 +76,11 @@ checkpoint download_genomes:
 
         # Fail if a listed accession was not downloaded (unknown, suppressed or mistyped).
         # A versionless accession (GCA_000149305) matches whichever version NCBI returned.
+        # The reference list is checked too, in case a GenBank twin was not returned.
+        REFERENCE=""
+        if [ -s data/tmp/reference.txt ]; then REFERENCE=$(cat data/tmp/reference.txt); fi
         MISSING=""
-        for acc in {params.accessions}; do
+        for acc in {params.accessions} $REFERENCE; do
             grep -qF -e "\\"accession\\":\\"$acc\\"" -e "\\"accession\\":\\"$acc." {output.genome_dir}/assembly_data_report.jsonl \\
                 || MISSING="$MISSING $acc"
         done
