@@ -42,6 +42,17 @@ checkpoint download_genomes:
         rm -rf data/tmp
         mkdir -p data/tmp/extracted
 
+        # NCBI's way for big downloads: a small "dehydrated" package (reports and file
+        # locations), then rehydrate fetches the genomes in parallel.
+        # fetch NAME DATASETS-ARGS... unpacks into data/tmp/extracted/NAME/
+        fetch() {{
+            name=$1
+            shift
+            datasets download genome "$@" --dehydrated --no-progressbar --filename data/tmp/$name.zip
+            unzip -q data/tmp/$name.zip -d data/tmp/extracted/$name/
+            datasets rehydrate --directory data/tmp/extracted/$name/ --max-workers 10 --no-progressbar
+        }}
+
         if [ -n "{params.taxon}" ] && [ "{params.reference_only}" = True ]; then
             # NCBI's reference genomes (at most one per species). Some are flagged only on
             # the RefSeq (GCF_) copy, so take each one's GenBank (GCA_) twin. A twin can be an
@@ -53,19 +64,16 @@ checkpoint download_genomes:
                 echo "No NCBI reference genomes for taxon {params.taxon}" >&2
                 exit 1
             fi
-            datasets download genome accession --inputfile data/tmp/reference.txt --filename data/tmp/taxon.zip
-            unzip -q data/tmp/taxon.zip -d data/tmp/extracted/taxon/
+            fetch taxon accession --inputfile data/tmp/reference.txt
         elif [ -n "{params.taxon}" ]; then
             # GenBank only: RefSeq (GCF_) copies of GenBank assemblies would be analysed twice
-            datasets download genome taxon "{params.taxon}" --assembly-source GenBank --filename data/tmp/taxon.zip
-            unzip -q data/tmp/taxon.zip -d data/tmp/extracted/taxon/
+            fetch taxon taxon "{params.taxon}" --assembly-source GenBank
         fi
 
         if [ -n "{params.accessions}" ]; then
             # Listed accessions are downloaded as given, GCF_ included; a versionless one gets its latest version
             printf '%s\\n' {params.accessions} > data/tmp/accessions.txt
-            datasets download genome accession --inputfile data/tmp/accessions.txt --assembly-version latest --filename data/tmp/accessions.zip
-            unzip -q data/tmp/accessions.zip -d data/tmp/extracted/accessions/
+            fetch accessions accession --inputfile data/tmp/accessions.txt --assembly-version latest
         fi
 
         # Flatten the directory structure
@@ -89,6 +97,15 @@ checkpoint download_genomes:
         done
         if [ -n "$MISSING" ]; then
             echo "Accessions not found on NCBI:$MISSING" >&2
+            exit 1
+        fi
+
+        # Every assembly in the report needs its genome file; a failed rehydrate
+        # download would otherwise drop it silently.
+        N_REPORT=$(wc -l < {output.genome_dir}/assembly_data_report.jsonl)
+        N_FNA=$(find {output.genome_dir} -name '*.fna' | wc -l)
+        if [ "$N_FNA" -lt "$N_REPORT" ]; then
+            echo "Only $N_FNA genome files for $N_REPORT assemblies in the NCBI report" >&2
             exit 1
         fi
 
