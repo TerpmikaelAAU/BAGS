@@ -34,6 +34,9 @@ checkpoint download_genomes:
     resources:
         mem_mb=resources["NCBI_datasets"]["mem_mb"],
         runtime=resources["NCBI_datasets"]["runtime"],
+    # NCBI downloads fail now and then (dropped connection, corrupt zip). Only this
+    # rule is retried (profile retries: 0); a mistyped accession is retried too.
+    retries: 3
     shell:
         """
         rm -rf data/tmp
