@@ -34,13 +34,40 @@ checkpoint download_genomes:
     resources:
         mem_mb=resources["NCBI_datasets"]["mem_mb"],
         runtime=resources["NCBI_datasets"]["runtime"],
-    # NCBI downloads fail now and then (dropped connection, corrupt zip). Only this
-    # rule is retried (profile retries: 0); a mistyped accession is retried too.
-    retries: 3
     shell:
         """
         rm -rf data/tmp
         mkdir -p data/tmp/extracted
+
+        # NCBI's way for big downloads: a small "dehydrated" package (reports and the list
+        # of genome files in fetch.txt), then rehydrate fetches the genomes in parallel.
+        # fetch NAME DATASETS-ARGS... unpacks into data/tmp/extracted/NAME/. NCBI downloads
+        # fail now and then (dropped connection, corrupt zip, a file not fetched), so each
+        # download is tried 3 times here. Not a rule-level retries: inside a SLURM job
+        # Snakemake applies those at two levels and the attempts multiply.
+        fetch_once() {{
+            name=$1
+            shift
+            pkg=data/tmp/extracted/$name/ncbi_dataset
+            rm -rf data/tmp/$name.zip data/tmp/extracted/$name
+            datasets download genome "$@" --dehydrated --no-progressbar --filename data/tmp/$name.zip \\
+                && unzip -q data/tmp/$name.zip -d data/tmp/extracted/$name/ \\
+                && datasets rehydrate --directory data/tmp/extracted/$name/ --max-workers 10 --no-progressbar \\
+                && [ -f $pkg/fetch.txt ] || return 1
+            # rehydrate's handling of failed downloads is undocumented: every file in
+            # fetch.txt (URL, size, path; CRLF line ends) must be there and not empty
+            for f in $(cut -f3 $pkg/fetch.txt | tr -d '\\r'); do
+                [ -s $pkg/$f ] || {{ echo "Not downloaded: $f" >&2; return 1; }}
+            done
+        }}
+        fetch() {{
+            for attempt in 1 2 3; do
+                fetch_once "$@" && return 0
+                echo "NCBI download of $1 failed (attempt $attempt of 3)" >&2
+                [ $attempt = 3 ] || sleep 60
+            done
+            return 1
+        }}
 
         if [ -n "{params.taxon}" ] && [ "{params.reference_only}" = True ]; then
             # NCBI's reference genomes (at most one per species). Some are flagged only on
@@ -53,24 +80,22 @@ checkpoint download_genomes:
                 echo "No NCBI reference genomes for taxon {params.taxon}" >&2
                 exit 1
             fi
-            datasets download genome accession --inputfile data/tmp/reference.txt --filename data/tmp/taxon.zip
-            unzip -q data/tmp/taxon.zip -d data/tmp/extracted/taxon/
+            fetch taxon accession --inputfile data/tmp/reference.txt
         elif [ -n "{params.taxon}" ]; then
             # GenBank only: RefSeq (GCF_) copies of GenBank assemblies would be analysed twice
-            datasets download genome taxon "{params.taxon}" --assembly-source GenBank --filename data/tmp/taxon.zip
-            unzip -q data/tmp/taxon.zip -d data/tmp/extracted/taxon/
+            fetch taxon taxon "{params.taxon}" --assembly-source GenBank
         fi
 
         if [ -n "{params.accessions}" ]; then
             # Listed accessions are downloaded as given, GCF_ included; a versionless one gets its latest version
             printf '%s\\n' {params.accessions} > data/tmp/accessions.txt
-            datasets download genome accession --inputfile data/tmp/accessions.txt --assembly-version latest --filename data/tmp/accessions.zip
-            unzip -q data/tmp/accessions.zip -d data/tmp/extracted/accessions/
+            fetch accessions accession --inputfile data/tmp/accessions.txt --assembly-version latest
         fi
 
-        # Flatten the directory structure
+        # Flatten the directory structure. mv, not cp: same disk, so no second copy of
+        # every genome (tens of GB for a big genus)
         mkdir -p {output.genome_dir}
-        find data/tmp/extracted/ -name '*.fna' -exec cp {{}} {output.genome_dir}/ \\;
+        find data/tmp/extracted/ -name '*.fna' -exec mv -f {{}} {output.genome_dir}/ \\;
 
         # Keep NCBI's metadata snapshot (species, strain, quality flags) for consolidate.py,
         # merged across the taxon and accession downloads
