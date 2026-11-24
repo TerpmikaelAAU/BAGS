@@ -100,12 +100,15 @@ checkpoint download_genomes:
             exit 1
         fi
 
-        # Every assembly in the report needs its genome file; a failed rehydrate
-        # download would otherwise drop it silently.
-        N_REPORT=$(wc -l < {output.genome_dir}/assembly_data_report.jsonl)
-        N_FNA=$(find {output.genome_dir} -name '*.fna' | wc -l)
-        if [ "$N_FNA" -lt "$N_REPORT" ]; then
-            echo "Only $N_FNA genome files for $N_REPORT assemblies in the NCBI report" >&2
+        # Every assembly in the report needs a non-empty genome file; rehydrate's handling
+        # of failed downloads is undocumented. The first "accession" on a line is the assembly's.
+        NO_FNA=""
+        for acc in $(awk '{{ if (match($0, /"accession": *"GC[AF]_[0-9]+\\.[0-9]+"/)) {{ s = substr($0, RSTART, RLENGTH); sub(/.*"GC/, "GC", s); sub(/"$/, "", s); print s }} }}' {output.genome_dir}/assembly_data_report.jsonl | sort -u); do
+            ls {output.genome_dir}/${{acc}}_*.fna > /dev/null 2>&1 || NO_FNA="$NO_FNA $acc"
+        done
+        EMPTY=$(find {output.genome_dir} -name '*.fna' -empty)
+        if [ -n "$NO_FNA" ] || [ -n "$EMPTY" ]; then
+            echo "Genome files missing for:$NO_FNA; empty: $EMPTY" >&2
             exit 1
         fi
 
