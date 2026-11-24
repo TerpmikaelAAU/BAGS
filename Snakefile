@@ -13,7 +13,7 @@ resources = {
     "antismash_database": {"mem_mb": 4 * GB, "runtime": 240},
     "GeneML": {"mem_mb": 48 * GB, "runtime": 180},
     "antismash": {"mem_mb": 64 * GB, "runtime": 180},
-    "NCBI_datasets": {"mem_mb": 4 * GB, "runtime": 240},
+    "NCBI_datasets": {"mem_mb": 4 * GB, "runtime": 720},  # Aspergillus (~1700 assemblies) took ~4 h
     "busco": {"mem_mb": 8 * GB, "runtime": 60},
     "get_geneml": {"mem_mb": 8 * GB, "runtime": 120},
     "bigscape": {"mem_mb": 32 * GB, "runtime": 1440},
